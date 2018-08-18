@@ -1,0 +1,35 @@
+//此题和91题核心思想相似
+//重点是在DP结束后由于可能出现最后一栋(n)和第一栋同时选取
+//此时的memo[n-1]为考虑了第一栋的最大值
+//但是无法确定当memo[n]中是否含有第一栋，故无法解决问题
+//所以再进行一次DP此次以第2栋作为起点，故最后一栋变成了第一栋，原来的最后一栋变成了倒数第二栋，此时的memo[n-1]也就变成了不考虑原先第一栋的最大值
+
+class Solution{
+private:
+    vector<int> memo;
+public:
+    int rob(vector<int>& nums){
+        int n=(int)nums.size();
+        if(n==0)
+            return 0;
+        if(n==1)
+            return nums[0];
+        memo.clear();
+        memo.push_back(0);
+        memo.push_back(nums[0]);
+        for(int i = 1;i < n; i ++)
+            memo.push_back(max(memo[i],memo[i-1]+nums[i]));
+        int max1=memo[n-1];
+        
+        nums.push_back(nums[0]);
+        nums.erase(nums.begin(),nums.begin()+1);
+        
+        memo.clear();
+        memo.push_back(0);
+        memo.push_back(nums[0]);
+        for(int i = 1;i < n; i ++)
+            memo.push_back(max(memo[i],memo[i-1]+nums[i]));
+        
+        return max(memo[n-1],max1);
+    }
+};
