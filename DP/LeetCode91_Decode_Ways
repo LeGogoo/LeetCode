@@ -1,1 +1,35 @@
+//memo[i]为前i个字母的编码总数
+//分3种情况：
+//1. s[i]='0' 时 ：当s[i-1]='1'或者s[i-1]='2' -> memo[i]=memo[i-2]
+//                否则，此题无解，return 0
+//2. s[i-1]=='1'||(s[i-1]=='2'&&s[i]<='6') 时 ：s[i] 可以独立存在，也可以与s[i-1]结合 -> memo[i]=memo[i-1]+memo[i-2]
+//3  (不具备2的可合并条件)： s[i] 只能独立存在 -> memo[i]=memo[i-1]
 
+class Solution {
+private:
+    vector<int> memo;
+public:
+    int numDecodings(string s) {
+        int n=(int)s.size();
+        if(n==0)
+            return 1;
+        memo.clear();
+        memo=vector<int>(n+1,1);
+        if(s[0]=='0')
+            return 0;
+        for(int i = 1;i < n;i++){
+            if(s[i]=='0'){
+                if(s[i-1]=='1'||s[i-1]=='2')
+                    memo[i+1]=memo[i-1];
+                else
+                    return 0;
+            }
+            else if(s[i-1]=='1'||(s[i-1]=='2'&&s[i]<='6')){
+                memo[i+1]=memo[i]+memo[i-1];
+            }
+            else
+                memo[i+1]=memo[i];
+        }
+        return memo[n];
+    }
+};
