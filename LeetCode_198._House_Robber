@@ -1,0 +1,17 @@
+
+class Solution{
+private:
+    vector<int> memo;
+public:
+    int rob(vector<int>& nums){
+        int n=(int)nums.size();
+        if(n==0)
+            return 0;
+        memo.clear();
+        memo.push_back(0);
+        memo.push_back(nums[0]);
+        for(int i = 1;i < n; i ++)
+            memo.push_back(max(memo[i],memo[i-1]+nums[i]));
+        return memo[n];
+    }
+};
