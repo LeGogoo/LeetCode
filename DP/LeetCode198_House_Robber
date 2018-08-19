@@ -1,6 +1,6 @@
 //DP：memo[i] 代表前n个房子的最大值
 //nums 储存房子的值，注意是以nums[0]代表第1个房子的值
-//memo[i]=max(memo[i-1]+memo[i-2]+nums[i])
+//memo[i]=max(memo[i-1]+memo[i-2]+nums[i-1])
 
 //-------------
 
