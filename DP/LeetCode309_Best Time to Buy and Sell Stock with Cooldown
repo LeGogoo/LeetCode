@@ -1,0 +1,67 @@
+//buyMemo[i]为第i天为买入时的最大利益
+//sellMemo[i]为第i天为卖出时的最大利益
+//买入得保证上次操作为卖出 且由于卖出后存在冻结期故buyMemo[i]=max(sellMemo[0...i-2])-prices[i-1] (sellMemo[0]为0值，为了保证开始的时候买入可以进行)
+//卖出时同样得保证上次操作为卖出 sellMemo[i]=max(buyMemo[1...i-1])+prices[i-1]
+//最大值一定出现在sellMemo中
+
+/*
+class Solution {
+private:
+    vector<int> buyMemo;
+    vector<int> sellMemo;
+public:
+    int maxProfit(vector<int>& prices) {
+        int n=(int)prices.size();
+        if(n==0)
+            return 0;
+        buyMemo.push_back(0);
+        buyMemo.push_back(0-prices[0]);
+        sellMemo.push_back(0);
+        sellMemo.push_back(0);
+        int maxSell=0;
+        for(int i=1;i<n;i++){
+            int maxM=numeric_limits<int>::min();
+            for(int j=0;j<i;j++)
+                maxM=max(maxM,sellMemo[j]);
+            buyMemo.push_back(maxM-prices[i]);
+            maxM=numeric_limits<int>::min();
+            for(int j=1;j<i+1;j++)
+                maxM=max(maxM,buyMemo[j]);
+            sellMemo.push_back(maxM+prices[i]);
+            maxSell=max(maxSell,maxM+prices[i]);
+        }
+        return maxSell;
+    }
+};
+ */
+
+//算发的效率很不理想执行用时72ms beat7%的提交记录
+//优化思路为将buyMemo[i]定义为第i天为买入（状态）时的最大收益（买入不一定发生在第i天）
+//         sellMemo[i]定义为第i天为卖出（状态）时的最大收益
+//故buyMemo[i]=max(buyMemo[i-1],sellMemo[i-2]-prices[i-1])
+// sellMemo[i]=max(sellMemo[i-1],buyMemo[i-1]+prices[i-1])
+
+class Solution {
+private:
+    vector<int> buyMemo;
+    vector<int> sellMemo;
+public:
+    int maxProfit(vector<int>& prices) {
+        int n=(int)prices.size();
+        if(n==0)
+            return 0;
+        buyMemo.push_back(0);
+        buyMemo.push_back(0-prices[0]);
+        sellMemo.push_back(0);
+        sellMemo.push_back(0);
+        int maxSell=0;
+        for(int i=2;i<n+1;i++){
+            buyMemo.push_back(max(buyMemo[i-1],sellMemo[i-2]-prices[i-1]));
+            sellMemo.push_back(max(sellMemo[i-1],buyMemo[i-1]+prices[i-1]));
+            maxSell=max(sellMemo[i],maxSell);
+        }
+        return maxSell;
+    }
+};
+
+//优化后的耗时：8ms beat80.72%的提交记录
