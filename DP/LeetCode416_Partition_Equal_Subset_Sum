@@ -15,7 +15,7 @@
 			 return false;
 		 sum = sum / 2;
 
-		 vector<bool>memo(sum+1,false);//用1维数组，使用方法可参考0-1背包问题的优化
+		 vector<bool>memo(sum+1,false);//用1维数组，使用方法可参考0-1背包问题的优化:/leetcodeX/DP/Knapsack
 		 if (nums[0] < sum);
 		 memo[nums[0]] = true;
 		 for (int i = 1; i < n; i++) {
