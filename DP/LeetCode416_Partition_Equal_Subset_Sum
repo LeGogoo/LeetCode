@@ -1,0 +1,30 @@
+ //当看到这种选择一部分元素来达到某一条件时->背包问题
+ //状态定义:F(i,j)表示在nums[0-i]中是否能选出和为j
+ //F(i,j)=F(i-1,j)||F(i-1,j-i)
+ class Solution {
+ public:
+	 bool canPartition(vector<int>& nums) {
+		 int n = nums.size();
+		 if (n == 0)
+			 return false;
+		 int sum=0;
+		 for (int i = 0; i < n; i++) {
+			 sum += nums[i];
+		 }
+		 if (sum % 2 == 1)
+			 return false;
+		 sum = sum / 2;
+
+		 vector<bool>memo(sum+1,false);//用1维数组，使用方法可参考0-1背包问题的优化
+		 if (nums[0] < sum);
+		 memo[nums[0]] = true;
+		 for (int i = 1; i < n; i++) {
+			 for (int j = sum; j - nums[i] >= 0; j--) {
+				 memo[j] = memo[j] || memo[j - nums[i]];
+				 if (j == sum && memo[j] == true)//提前结束
+					 return true;
+			 }
+		 }
+		 return false;
+	 }
+ };
