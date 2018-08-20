@@ -1,0 +1,64 @@
+ //背包问题
+ //状态定义:F(i,j)表示在nums[0-i]中选出的合为j的包含硬币类型最少的方案的类型和，如果不存在则为-1
+ //F(i,j)=min(F(i-1,j-coins[i-1]*k)) k=0...amount/coins[i-1]
+ class Solution {
+ public:
+	 int coinChange(vector<int>& coins, int amount) {
+		 int n = coins.size();
+		 if (amount == 0) return 0;
+		 if (n == 0) return -1;
+		 vector<int> memo(amount + 1, -1);
+		 for (int i = 0; i < amount + 1; i++) {
+			 if (i%coins[0] == 0)
+				 memo[i] = i / coins[0];
+		 }	 
+			 
+		 for (int i = 1; i < n; i++) {
+			 for (int j = amount; j >= 0; j--) {
+				 int mins = -1;
+				 for (int z = 0; z <= amount / coins[i] && j >= z * coins[i]; z++) {
+					 int s = j - coins[i] * z; 
+					 if (memo[s] != -1) {
+						 if (mins == -1)
+							 mins = memo[s] + z;
+						 else
+							 mins = min(mins, memo[s] + z);
+					 }
+				 }
+				 memo[j] = mins; 
+			 }
+		 }
+		 return memo[amount];  
+		 
+	 }
+ };
+ //时间复杂度为O(N*T*S) = O(N*T^2)其中N为conins的种类，T为目标金额，S为T/最小的硬币面值
+ //这是一个非常不理想的时间复杂度，在LeetCode上耗时1088ms
+ //优化思路为：
+ 
+ //状态定义F(t)表示达到t金额所需要的最小conins个数，当无解时为-1
+ //F(t)=min(F(t-prices[m]))
+ //由于coins的面值都是正整数，故 t-prices[m] 一定有意义
+ 
+ class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> memo(amount+1,0);
+        for(int i=1;i<amount+1;i++){
+            int mins=-1;
+            for(int j=0;j<coins.size();j++){
+                if(i-coins[j]>=0&&memo[i-coins[j]]!=-1){
+                    if(mins==-1)
+                        mins=memo[i-coins[j]]+1;
+                    else
+                        mins=min(mins,memo[i-coins[j]]+1);
+                }
+            }
+            memo[i]=mins;
+        }
+        return memo[amount];
+    }
+};
+
+//优化后的时间复杂度为O(T*N)其中T为目标金额，N为硬币种类
+//LeetCode上的运行时间为24ms beats82.72%的提交记录，还不错
