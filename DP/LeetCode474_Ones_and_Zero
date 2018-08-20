@@ -1,0 +1,38 @@
+//F(u,i,j)表示 且选择 0...u 字符串,i个0，j个1， 所能代表的最大价值
+//F(u,i,j)=max(F(u-1,i,j),F(u-1,i-str[u].m,j-str[u].n))
+
+class Solution {
+public:
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        int s=(int)strs.size();
+        if(s==0)
+            return 0;
+        vector<pair<int, int>>str(strs.size(),make_pair(0,0));
+        vector<vector<int>>memo(m+1,vector<int>(n+1,0));
+        for(int i=0;i<s;i++){
+            int strm=0;
+            int strn=0;
+            for(int j=0;j<strs[i].size();j++){
+                if(strs[i][j]=='1')
+                    strn++;
+                else
+                    strm++;
+            }
+            str[i].first=strm;
+            str[i].second=strn;
+        }
+        for(int i=0;i<m+1;i++)
+            for(int j=0;j<n+1;j++)
+                if(i-str[0].first>=0&&j-str[0].second>=0)
+                    memo[i][j]=1;
+        
+        for(int z=1;z<s;z++)
+            for(int i=m;i-str[z].first>=0;i--)
+                for(int j=n;j-str[z].second>=0;j--){
+                    memo[i][j]=max(memo[i][j],memo[i-str[z].first][j-str[z].second]+1);
+                }
+        return memo[m][n];
+    }
+};
+//时间复杂度=O(U*M*N)U代表字符串个数，M代表给的0个数，N代表给的1个数
+//耗时56ms
