@@ -1,0 +1,77 @@
+//F(i，j)表示以长度为i+1且以第j个元素作为结尾的方案数量
+//F(i,j)=sum(F(i-1,0..<j))
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int nS=(int)nums.size();
+        if(nS==0)
+            return 0;
+        vector<int>memo(nums.size(),1);
+        int maxLength=1;
+        //初始为全1，代表以任何一个数结尾且长度为1的方案都是1个
+        for(int i=1;i<nS;i++){//最大长度为整个数组就是一个递增序列，此时长度为nS
+            bool isAllZero=true;
+            for(int j=nS-1;j>=0;j--){
+                int sum=0;
+                for(int z=0;z<j;z++){
+                    if(nums[z]<nums[j]){
+                        sum+=memo[z];
+                        if(sum!=0&&maxLength<i+1){
+                            isAllZero=false;
+                            maxLength=i+1;
+                        }
+                    }
+                }
+                memo[j]=sum;
+            }
+            if(isAllZero==true)
+                break;
+        }
+        return maxLength;
+    }
+};
+
+//超时了。。。。过了21/24 
+//DP问题优化时间复杂度优先考虑 去优化状态
+//新的状态定义：将F(i)定义为以i作为结尾的最大方案长度
+//在单独开辟一个vector来记录F(i)的个数
+//F(i)=max(F(j))其中j属于0..>i 且nums[j]<nums[i]
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int nS=(int)nums.size();
+        if(nS==0)
+            return 0;
+        vector<int>memo(nS,1);//所有元素都有至少一种方案：仅包含自己
+        vector<int>maxLength(nS,1);//用来记录每一种元素结尾的最大长度的方案的个数
+        int maxMemo=1;
+        int maxMemoLength=1;
+        for(int i=1;i<nS;i++){
+            int maxL=1;
+            for(int j=0;j<i;j++){
+                if(nums[j]<nums[i]){
+                    if(maxL<memo[j]+1){
+                        maxL=memo[j]+1;
+                        maxLength[i]=maxLength[j];
+                    }
+                    else
+                        maxLength[i]+=maxLength[j];
+                }
+            }
+            memo[i]=maxL;
+            if(maxMemo<maxL){
+                maxMemo=maxL;
+                maxMemoLength=maxLength[i];
+            }
+            else if(maxMemo==maxL)
+                maxMemoLength+=maxLength[i];
+        }
+        return maxMemo;
+    }
+};
+//做到一半才发现把这道题看错了，题意叫求最大长度，我开始看成了求最大长度的个数
+//但是在看错的前提了，超时了，我发现确实可以优化，便优化了
+//上面的函数return maxMemo便是返回最大长度，return maxMemoLength便是返回最大长度的个数
+//时间复杂度为O(N^2) leetcode耗时24ms beats47.79的提交记录
