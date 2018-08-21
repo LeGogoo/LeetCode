@@ -1,0 +1,26 @@
+//F(i)表示考虑string的 前i个字符构成的字符串 是否有解
+//F(i)=hasTrue(F(i-word[all]))
+
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        int wS=(int)wordDict.size();
+        int sS=(int)s.size();
+        if(wS==0||sS==0)
+            return false;
+        vector<bool>memo(sS+1,false);
+        memo[0]=true;
+        string sz(s,0,1);
+        for(int i=1;i<sS+1;i++){
+            string sI(s,0,i);
+            for(int j=0;j<wS;j++){
+                int dS=(int)wordDict[j].size();
+                if(i>=dS&&sI.substr(i-dS,dS)==wordDict[j]&&memo[i-dS]==true){
+                    memo[i]=true;
+                    break;
+                }
+            }
+        }
+        return memo[sS];
+    }
+};
