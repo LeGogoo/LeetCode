@@ -1,0 +1,38 @@
+//  将F(i)定位为5已i作为结尾的最长摆动序列的长度
+//  用一个vector<int>来表示F(i)的状态 1表示下一个数应该大于nums[i] -1表示小于 0表示大与小于皆可
+//  F(i)=max(F(j)+1) 其中j属于0..<i 且满足vecotr<int>的状态
+
+class Solution {
+public:
+    int wiggleMaxLength(vector<int>& nums) {
+        int n=(int)nums.size();
+        if(n==0)
+            return 0;
+        vector<int> memo(n,1);
+        vector<int> next(n,0);
+        
+        int maxLength=1;
+        for(int i=1;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(memo[j]+1>memo[i]){
+                    if(next[j]==0&&nums[i]!=nums[j]){
+                        memo[i]=memo[j]+1;
+                        next[i]=nums[i]>nums[j]?-1:1;
+                    }
+                    else if(nums[i]>nums[j]&&next[j]==1){
+                        memo[i]=memo[j]+1;
+                        next[i]=-1;
+                    }
+                    else if(nums[i]<nums[j]&&next[j]==-1){
+                        memo[i]=memo[j]+1;
+                        next[i]=1;
+                    }
+                    maxLength=max(maxLength,memo[i]);
+                }
+            }
+        }
+        return maxLength;
+    }
+};
+//时间复杂度O(N^2) N=数组元素个数
+//letcode耗时4ms beats39.51%的提交记录
