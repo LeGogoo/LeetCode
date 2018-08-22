@@ -75,3 +75,26 @@ public:
 //但是在看错的前提了，超时了，我发现确实可以优化，便优化了
 //上面的函数return maxMemo便是返回最大长度，return maxMemoLength便是返回最大长度的个数
 //时间复杂度为O(N^2) leetcode耗时24ms beats47.79的提交记录
+
+//下面是原题的完整解：
+//将F(i)定义为以第i个元素作为结尾 的最大序列长度
+//F(i)=max(F(j)+1) 其中j=0..<i 且nums[j]<nums[i]
+//对于所有元素都至少有只有它自己这种情况，这时的长度为1 故给F(i)初值为1
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n=(int)nums.size();
+        if(n==0)
+            return 0;
+        vector<int> memo(n,1);
+        int maxLength=1;
+        for(int i=1;i<n;i++){
+            //对memo[0]不用考虑，因为一定为1
+            for(int j=0;j<i;j++)
+                if(nums[j]<nums[i])
+                    memo[i]=max(memo[i],memo[j]+1);
+            maxLength=max(maxLength,memo[i]);
+        }
+        return maxLength;
+    }
+};
