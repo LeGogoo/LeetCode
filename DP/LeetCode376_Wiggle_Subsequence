@@ -36,3 +36,33 @@ public:
 };
 //时间复杂度O(N^2) N=数组元素个数
 //letcode耗时4ms beats39.51%的提交记录
+
+//贪心解法真的很巧妙
+class Solution {
+public:
+    int wiggleMaxLength(vector<int>& nums) {
+        int n=(int)nums.size();
+        if(n==0)
+            return 0;
+        
+        int count=1;
+        int i;
+        for(i=0;i<n-1;i++)
+            if(nums[i]!=nums[i+1])
+                break;
+        bool big=nums[i]>nums[i+1]?false:true;
+        for(;i<n-1;i++){
+            if(nums[i]<nums[i+1]&&big==true){
+                big=false;
+                count++;
+            }
+            else if(nums[i]>nums[i+1]&&big==false){
+                big=true;
+                count++;
+            }
+        }
+        return count;
+    }
+};
+//时间复杂度O(N) N为元素个数
+//leetcode 0ms 
