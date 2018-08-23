@@ -1,0 +1,27 @@
+//F(i)为已i结尾的最长的等差数组的长度
+//F(i)=A[i]-A[i-1]==A[i-1]-A[i-2]?F(i)+1:1
+//其实不难发现只需要记录F(i-1)这一个值便够了
+//当F(i)>=3是 每次增加的等差数组个数就是F(i)-2  (C-(F(i),3)
+
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int count=0;
+        int length=2;
+        int AS=(int)A.size();
+        if(AS==0)
+            return 0;
+        for(int i=2;i<AS;i++){
+            if(A[i]-A[i-1]==A[i-1]-A[i-2]){
+                length++;
+                count+=length-2;
+            }
+            else{
+                length=2;
+            }
+        }
+        return count;
+    }
+};
+
+//时间复杂度O(N)
