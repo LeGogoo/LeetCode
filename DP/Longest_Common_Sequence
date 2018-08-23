@@ -1,0 +1,86 @@
+//给定两个字符串，求解这两个字符串的最长公共子序列（Longest Common Sequence）。比如字符串1：BDCABA；字符串2：ABCBDAB
+//则这两个字符串的最长公共子序列长度为4，最长公共子序列是：BCBA
+
+//F(i,j)代表考虑str1的前i个字符串和str2的前j个字符串所能得到的最大解
+//F(i,j)={
+//            if(str1[i]==str2[j]) F(i,j)=1+F(i-1,j-1)
+//            else max(F(i,j-1),F(i-1,j))
+//       }
+//记忆画搜索：
+class Solution{
+private:
+    vector<vector<int>>memo;
+    int lcs(const string &str1,const string &str2,int i,int j){
+        if(i==-1||j==-1)
+            return 0;
+        if(memo[i][j]!=-1)
+            return memo[i][j];
+        if(str1[i]==str2[j])
+            memo[i][j] = 1+lcs(str1,str2,i-1,j-1);
+        else{
+            memo[i][j]=max(lcs(str1,str2,i-1,j),lcs(str1,str2,i,j-1));
+        }
+        return memo[i][j];
+    }
+public:
+    int wiggleMaxLength(const string &str1,const string &str2){
+        int s1=(int)str1.size();
+        int s2=(int)str2.size();
+        memo= vector<vector<int>>(s1,vector<int>(s2,-1));
+        return lcs(str1,str2,s1-1,s2-1);
+    }
+}
+//F(i,j)代表考虑str1的前i个字符串和str2的前j个字符串所能得到的最大解
+class Solution{
+private:
+    vector<vector<int>>memo;
+public:
+    int wiggleMaxLength(const string &str1,const string &str2){
+        int s1=(int)str1.size();
+        int s2=(int)str2.size();
+        memo = vector<vector<int>>(s1+1,vector<int>(s2+1,-1));
+        for(int i=0;i<s1+1;i++)
+            memo[i][0]=0;
+        for(int i=0;i<s2+1;i++)
+            memo[0][i]=0;
+        //当2个中的一个字符串为空了 这时只有0中可能
+        
+        for(int i=1;i<s1+1;i++)
+            for(int j=1;j<s2+1;j++){
+                if(str1[i]==str2[j])
+                    memo[i][j]=memo[i-1][j-1]+1;
+                else
+                    memo[i][j]=max(memo[i-1][j],memo[i][j-1]);
+            }
+        
+        return memo[s1][s2];
+    }
+};
+
+//动态规划：
+//状态的定义和转移方程和上面一样
+class Solution{
+private:
+    vector<vector<int>>memo;
+public:
+    int wiggleMaxLength(const string &str1,const string &str2){
+        int s1=(int)str1.size();
+        int s2=(int)str2.size();
+        memo = vector<vector<int>>(s1+1,vector<int>(s2+1,-1));
+        for(int i=0;i<s1+1;i++)
+            memo[i][0]=0;
+        for(int i=0;i<s2+1;i++)
+            memo[0][i]=0;
+        //当2个中的一个字符串为空了 这时只有0中可能
+        
+        for(int i=1;i<s1+1;i++)
+            for(int j=1;j<s2+1;j++){
+                if(str1[i]==str2[j])
+                    memo[i][j]=memo[i-1][j-1]+1;
+                else
+                    memo[i][j]=max(memo[i-1][j],memo[i][j-1]);
+            }
+        
+        return memo[s1][s2];
+    }
+};
