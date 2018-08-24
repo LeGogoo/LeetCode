@@ -1,0 +1,30 @@
+//先排序，再按照求三数之和的基本思路确定一个起点（起点应该是小于target的）
+//再使用一个对撞指针去求后面2数
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        sort(nums.begin(),nums.end());
+        int nS=(int)nums.size();
+        if(nS<3)
+            return 0;
+        int maxNear=nums[0]+nums[1]+nums[2];
+        for(int i=0;i<nS-2;i++){
+            int left=i+1;
+            int right=nS-1;
+            int start=nums[i];//-3 0 1 2
+            while(left<right){
+                int res=start+nums[left]+nums[right];
+                maxNear=abs(target-res)<abs(target-maxNear)?res:maxNear;
+                if(res<target)
+                    left++;
+                else if(res>target)
+                    right--;
+                else
+                    return target;
+            }
+        }
+        return maxNear;
+    }
+};
+//时间复杂度为O(N^2) N为元素个数
+//leetcode用时8ms beats95.35%的提交记录
