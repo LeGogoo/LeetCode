@@ -1,0 +1,32 @@
+//由于如果单纯的使用链表，在进行跳转操作的时候会频繁的重复操作链表
+//所以我们引入传入链表的反向索引表和返回链表的索引表
+//前者为的是能快速找到传入链表的random指向的位置的索引值
+//后者则可能通过这个索引值快速的把返回链表的random指向返回链表的相应位置
+class Solution {
+public:
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        if(head==NULL)
+            return NULL;
+        map<RandomListNode*,int>headRandom;//传入链表的反向索引表
+        vector<RandomListNode*>resPointer;//返回链表的索引表
+        RandomListNode *resHead=new RandomListNode(0);
+        RandomListNode *resIt=resHead;
+        RandomListNode* headIt=head;
+        for(int i=0;headIt!=NULL;headIt=headIt->next,i++){
+            headRandom.insert(make_pair(headIt,i));
+            resIt->next=new RandomListNode(headIt->label);
+            resPointer.push_back(resIt->next);
+            resIt=resIt->next;
+        }
+        for(resIt=resHead->next,headIt=head;headIt!=NULL;headIt=headIt->next,resIt=resIt->next){
+            if(headIt->random!=NULL){
+                resIt->random=resPointer[headRandom[headIt->random]];
+            }
+        }
+        RandomListNode *res=resHead->next;
+        free(resHead);
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(N)
+//leetcode耗时40ms beats98.76%的提交记录
