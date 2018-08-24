@@ -1,0 +1,26 @@
+//用二分搜索法遍历数组，访问顺序为mid->left->right
+//对应 先序建树
+
+class Solution {
+private:
+    TreeNode* BuildTreeWithBinarySearch(vector<int>&list,int left,int right){
+        //[left,right]
+        int mid=left+(right-left)/2;
+        TreeNode *thisNode = new TreeNode(list[mid]);
+        if(mid>left)
+            thisNode->left=BuildTreeWithBinarySearch(list,left,mid-1);
+        if(mid<right)
+            thisNode->right=BuildTreeWithBinarySearch(list, mid+1, right);
+        return thisNode;
+    }
+public:
+    TreeNode* sortedListToBST(ListNode* head) {
+        if(head==NULL)
+            return NULL;
+        vector<int> list;
+        for(ListNode* i=head;i!=NULL;i=i->next){
+            list.push_back(i->val);
+        }
+        return BuildTreeWithBinarySearch(list,0,(int)list.size()-1);
+    }
+};
