@@ -1,0 +1,24 @@
+//先排序 排序后一个元素所能得到的最小时间差一定来自和它相临的元素(注意头尾是相连的)
+class Solution {
+private:
+    int getDifferenceValue(string a,string b){
+        //分别算2个时间和00：00的差值，再把差值相减
+        //注意函数参数必须保证小的时间在前，大的在后
+        int aCount=((a[0]-'0')*10+a[1]-'0')*60+((a[3]-'0')*10+a[4]-'0');
+        int bCount=((b[0]-'0')*10+b[1]-'0')*60+((b[3]-'0')*10+b[4]-'0');
+        int res=bCount-aCount;
+        if(res>720)res=1440-res;
+        return res;
+    }
+public:
+    int findMinDifference(vector<string>& timePoints) {
+        int tS=(int)timePoints.size();
+        sort(timePoints.begin(),timePoints.end());
+        int minD=getDifferenceValue(timePoints[0],timePoints[tS-1]);//初值为头尾差
+        for(int i=1;i<tS;i++)
+            minD=min(minD,getDifferenceValue(timePoints[i-1],timePoints[i]));
+        return minD;
+    }
+};
+//时间复杂度为O(NlongN) （排序nlong,排序后n）
+//leetcode 耗时16ms beats98.08%的提交记录
