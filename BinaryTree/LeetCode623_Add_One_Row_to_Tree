@@ -1,0 +1,41 @@
+//首先遍历树找到所有第d-1层的非空节点 将其推出一个队列中
+//再出队列并添加
+class Solution {
+private:
+    queue<TreeNode*> need;
+    void DLR(TreeNode* root,int deep,const int targetDeep){
+        if(root==NULL)
+            return;
+        if(deep==targetDeep){
+            need.push(root);
+            return;
+        }
+        DLR(root->left,deep+1,targetDeep);
+        DLR(root->right,deep+1,targetDeep);
+    }
+public:
+    TreeNode* addOneRow(TreeNode* root, int v, int d) {
+        if(d==1){
+            TreeNode* res = new TreeNode(v);
+            res->left=root;
+            return res;
+        }
+        queue<TreeNode*> empty;
+        swap(empty, need);//清空queue
+        DLR(root,1,d-1);
+        while(!need.empty()){
+            TreeNode* front = need.front();
+            TreeNode* frontLeft = new TreeNode(v);
+            frontLeft->left=front->left;
+            front->left=frontLeft;
+            TreeNode* frontRight = new TreeNode(v);
+            frontRight->right=front->right;
+            front->right=frontRight;
+            need.pop();
+        }
+        return root;
+    }
+};
+
+//时间复杂度O(N) 空间复杂度O(N) 其实完全可以不使用queue 在每次遍历到的时候直接添加就可以了
+//leetcode用时12ms beats100%的提交记录
