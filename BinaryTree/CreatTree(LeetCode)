@@ -1,0 +1,33 @@
+TreeNode* CreatTree(vector<int>vectorTree) {
+    //注意在null节点处要给一个null
+    if (vectorTree.empty())
+        return NULL;
+    assert(vectorTree[0]);//头结点不能为空
+    queue<TreeNode*> que;//存放可插入的节点（所有非空叶子节点）
+    TreeNode* root;
+    root = new TreeNode(vectorTree[0]);
+    que.push(root);
+    
+    for (int i = 1; i < vectorTree.size(); i++) {
+        
+        assert(!que.empty());//保证传入值有效 如{0,1,2}无效
+        TreeNode* topNode = que.front();//更新可插入节点(待插入节点的父节点)
+        que.pop();
+        if (vectorTree[i] != 0) {//如果为0(NULL)时可以不做处理，因为构造节点时left和right默认值为NULL
+            TreeNode* newNode = new TreeNode(vectorTree[i]);
+            que.push(newNode);
+            topNode->left = newNode;
+        }
+        
+        i++;//继续看右边
+        
+        if (i < vectorTree.size()) {//保证还有值
+            if (vectorTree[i] != 0){
+                TreeNode* newNode = new TreeNode(vectorTree[i]);
+                que.push(newNode);
+                topNode->right = newNode;
+            }
+        }
+    }
+    return root;
+}
