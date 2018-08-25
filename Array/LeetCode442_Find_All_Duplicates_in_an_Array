@@ -1,0 +1,18 @@
+//一道很巧妙的题，因为1 ≤ a[i] ≤ n （n为数组长度） 所以我们可以在数组上面进行标记操作，也就是模拟了一个hasp_set
+//其中元素的值作为键值，对应到的位置是以键值为下标的那个元素，不能破坏那个元素，故用标志为负数的方式标记是否存在
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        vector<int>res;
+        for(int i=0;i<nums.size();i++){
+            int index=abs(nums[i])-1;
+            if(nums[index]<0)
+                res.push_back(abs(nums[i]));
+            else
+                nums[index]=-nums[index];
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(1)
+//leetcode上用时124ms beats78.85%的提交记录
