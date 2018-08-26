@@ -1,0 +1,32 @@
+//水题 没什么好说的
+class Solution {
+public:
+    vector<string> summaryRanges(vector<int>& nums) {
+        vector<string>res;
+        int nS = (int)nums.size();
+        if(nS==0)
+            return res;
+        int end=nums[0];
+        int start=nums[0];
+        for(int i=1;i<nS+1;i++){
+            if(nums[i]==end+1&&i!=nS){
+                end=nums[i];
+            }
+            else{
+                if(start==end){
+                    res.push_back(to_string(start));
+                }
+                else{
+                    res.push_back(to_string(start)+"->"+to_string(end));
+                }
+                if(i!=nS){
+                    start=nums[i];
+                    end=start;
+                }
+            }
+        }
+        return res;
+    }
+};
+//时间复杂度O(N)
+//leetcode耗时0ms beats100%的提交记录
