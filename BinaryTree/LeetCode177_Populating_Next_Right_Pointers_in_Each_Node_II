@@ -1,0 +1,30 @@
+
+class Solution {
+private:
+    vector<TreeLinkNode*> nextNode;
+    void DLR(TreeLinkNode *root,int deep){
+        if(deep>(int)nextNode.size()){
+            nextNode.push_back(root);
+        }
+        else{
+            nextNode[deep-1]->next=root;
+            nextNode[deep-1]=nextNode[deep-1]->next;
+            nextNode[deep-1]->next=NULL;
+        }
+        if(root->left!=NULL)
+            DLR(root->left,deep+1);
+        if(root->right!=NULL)
+            DLR(root->right,deep+1);
+    }
+public:
+    void connect(TreeLinkNode *root) {
+    //使用一个vector 对每一层都存一个指针 来进行next操作
+        if(root==NULL)
+            return;
+        nextNode.clear();
+        DLR(root,1);
+    }
+};
+
+//时间复杂度为O(N) 空间复杂度也为O(N)  (N为节点个数)
+//leetcode上耗时24ms beats86.90%的提交记录
