@@ -1,0 +1,28 @@
+//贪心算法 先对vector进行排序 再从左至右的以每次保证射最多的气球
+//维护一个区间，是得这个区间能射到前面所有没射到过的气球
+//当区间无解的时候，新开一个区间，并把计数加一
+class Solution {
+public:
+    int findMinArrowShots(vector<pair<int, int>>& points) {
+        if(points.size()==0)
+            return 0;
+        sort(points.begin(),points.end(),[](pair<int,int>pair1,pair<int,int>pair2)->bool{
+            return pair1.first<pair2.first;
+        });
+        int count = 1;
+        int left = points[0].first;
+        int right = points[0].second;
+        for(int i = 1;i < points.size();i++){
+            left = points[i].first;
+            if(points[i].first > right){
+                count++;
+                right = points[i].second;
+            }
+            else if(points[i].second < right)
+                right = points[i].second;
+        }
+        return count;
+    }
+};
+//时间复杂度为O(N) 
+//leetcode耗时72ms beats97.82%的提交记录
