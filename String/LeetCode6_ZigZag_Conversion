@@ -1,0 +1,34 @@
+//一道简单的找规律的题
+//注意第一行和最后一行要特殊处理一下
+class Solution {
+public:
+    string convert(string s, int numRows) {
+        int sS=(int)s.size();
+        string res;
+        if(sS==0)
+            return res;
+        if(numRows==1)
+            return s;
+        for(int i=0;i<numRows;i++){
+            int j = i;
+            int z = 0;
+            int add=(numRows-i)*2-2;
+            while(j < sS){
+                
+                res.push_back(s[j]);
+                if((i==0||i==numRows-1)){
+                    j+=numRows*2-2;
+                    continue;
+                }
+                if(z % 2 == 0)
+                    j+=add;
+                else
+                    j+=i*2;
+                z++;
+            }
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N)
+//leetcode 耗时16ms beats95.97%的提交记录
