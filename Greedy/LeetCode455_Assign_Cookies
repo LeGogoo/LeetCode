@@ -1,0 +1,25 @@
+//简单贪心
+//可以总是去看最大的饼干是否能够给最贪的孩子，也可以是看最不贪心的孩子每次是否能得到最小的饼干
+//但是从道理上讲，我觉得看最不贪心的孩子每次是否能得到最小的饼干 是比较合理的，你那么贪，我还先管你？
+class Solution {
+public:
+	int findContentChildren(vector<int>& g, vector<int>& s) {
+		sort(g.begin(), g.end());
+		sort(s.begin(), s.end());
+		int gi = 0;
+		int si = 0;
+		int res = 0;
+		while (gi < g.size() && si < s.size()) {
+			if (s[si] >= g[gi]) {
+				res++;
+				gi++;
+				si++;
+			}
+			else
+				si++;
+		}
+		return res;
+	}
+};
+//时间复杂度为O(N) N为g和s的小值
+//leetcode用时36ms beats94.40%的提交记录
