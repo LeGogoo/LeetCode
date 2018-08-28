@@ -1,0 +1,89 @@
+//判断区间相连：先以开始位置为键值进行排序，判断下一个区间的开始点是否在上一个区间的结束点的前面
+//F(i)为前i个区间在不重叠的情况下以第i个区间作为结尾，可以保留的最大值
+//F(i)=max(F(j))+1 其中j<i且第j个区间不与第i个区间重合
+struct Interval {
+    int start;
+	int end;
+	Interval() : start(0), end(0) {}
+	Interval(int s, int e) : start(s), end(e) {}
+};
+class Solution {
+public:
+	int eraseOverlapIntervals(vector<Interval>& intervals) {
+		int inS = intervals.size();
+		if (inS == 0)
+			return 0;
+		int res = 1;
+		sort(intervals.begin(), intervals.end(), [](const Interval &a, const Interval &b) {return a.start < b.start; });
+		vector<int>memo(inS, 1);//每个区间都至少有只含它自身的这种情况
+		for (int i = 1; i < inS; i++) {
+			for (int j = 0; j < i; j++) {
+				if (intervals[j].end <= intervals[i].start)
+					memo[i] = max(memo[i], memo[j]+1);
+			}
+			res = max(res, memo[i]);
+		}
+		return inS - res;
+	}
+};
+//时间复杂度为O(N^2)
+//leetcode 用时200ms beats17.39%的提交记录
+//可用贪心进行优化，对起点相同的情况，应该总是去选择结束点小的，这样可以保证后面可以得到的空间最大
+class Solution {
+public:
+	int eraseOverlapIntervals(vector<Interval>& intervals) {
+		int inS = intervals.size();
+		if (inS == 0)
+			return 0;
+		int res = 1;
+		sort(intervals.begin(), intervals.end(), [](const Interval &a, const Interval &b)->bool{
+			if (a.start == b.start)
+				return a.end < b.end;
+			return a.start < b.start; 
+		});
+		vector<int>memo(inS, 1);//每个区间都至少有只含它自身的这种情况
+		for (int i = 1; i < inS; i++) {
+			if (intervals[i].start == intervals[i - 1].start) {
+				memo[i] = memo[i - 1];
+				intervals[i].end = intervals[i - 1].end;
+				continue;
+			}
+			for (int j = 0; j < i; j++) {
+				if (intervals[j].end <= intervals[i].start)
+					memo[i] = max(memo[i], memo[j]+1);
+			}
+			res = max(res, memo[i]);
+		}
+		return inS - res;
+	}
+};
+//争对相同起点的情况进行了优化，但是时间复杂度还是不变
+//leetcode上的用时也没变，代表对较大的不含相同起点的情况没有什么优化效果
+
+//现在把这个问题从动态规划的思路中拉出来，其实可以直接使用贪心算法
+//每次总是去选择一个结束最小且和前一个没有冲突的区间
+//而前一个也是结束最小的，所以这样一定能得到一个最小值
+//不难发现，现在的排序条件需要改变，我们针对结束进行排序
+class Solution {
+public:
+	int eraseOverlapIntervals(vector<Interval>& intervals) {
+		int inS = intervals.size();
+		if (inS == 0)
+			return 0;
+		int res = 1;
+		sort(intervals.begin(), intervals.end(), [](const Interval &a, const Interval &b) {return a.end < b.end; });
+		vector<int>memo(inS, 1);//每个区间都至少有只含它自身的这种情况
+		int start = intervals[0].start;
+		int end = intervals[0].end;
+		for (int i = 1; i < inS; i++) {
+			if (intervals[i].start >= end) {
+				res++;
+				start = intervals[i].start;
+				end = intervals[i].end;
+			}
+		}
+		return inS - res;
+	}
+};
+//时间复杂度降到了O(N)
+//leetccode 上耗时8ms beats96.38%的提交记录
