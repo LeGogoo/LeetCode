@@ -1,0 +1,43 @@
+//数学规律题
+//3种情况：
+//1： 12345 （最后2位中最后一位大于倒数第二位 直接交换这2位）变成 12354
+//2： 54321 （已经是最后一个排序）返回12345
+//3： 12354 （3后面的都是降序 所以3作为进位项 于是3要与3后面的比3大的最小项交换 然后进位后对3后面按照升序排序）
+
+//可以提炼为1种情况：
+//从后向前遍历数组 i=0...size-2 当找到第一个nums[i]<nums[i+1]时 把这个i作为进位项 
+//将i与i后面大于i的最小值交换，再将i后面的元素升序排序
+class Solution {
+public:
+	void nextPermutation(vector<int>& nums) {
+		int nS = nums.size();
+		if (nS == 0 || nS == 1)
+			return;
+		for (int i = nS - 2; i >= 0; i--) {
+			if (nums[i] < nums[i + 1]) {
+				//找到i
+				int swapTargrt=-1;//存待交换的下标
+				for (int j = i + 1; j < nS; j++) {
+					if (nums[j] > nums[i]) {
+						if (swapTargrt == -1)
+							swapTargrt = j;
+						else if (nums[swapTargrt] > nums[j]) {
+							swapTargrt = j;
+						}
+					}
+				}
+				swap(nums[i], nums[swapTargrt]);
+				//接着对后面进行排序
+				vector<int>::iterator it = nums.begin();
+				for (int z = 0; z < i + 1; z++)
+					it++;
+				sort(it, nums.end());
+				return;
+			}
+		}
+		sort(nums.begin(), nums.end());
+	}
+};
+
+//时间复杂度为O(NlongN)主要体现在排序上
+//leetcode用时8ms beats100%的提交记录
