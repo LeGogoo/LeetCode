@@ -1,0 +1,33 @@
+//使用动态规划
+//F(i,j)为从i开始，到j结束是否是一个回文
+//F(i,j)=F(i+1,j-1)&&s[i]==s[j]
+//不难发现，此题的遍历方式与普通的动态规划不同
+//由于长的串一定是来自短的串，所以以串的长度作为关键值进行遍历
+class Solution {
+public:
+	string longestPalindrome(string s) {
+		int sS = s.size();
+		string res = "";
+		if (sS == 0)
+			return res;
+		int maxJ = 0;
+		int maxLength = 0;
+		vector<vector<bool>>memo(sS, vector<bool>(sS, false));
+		for (int i = 0; i < sS; i++)
+			memo[i][i] = true;
+		//只有一个字符的串也是回文串
+		for (int i = 1; i < sS; i++)
+			for (int j = 0; j + i <= sS; j++) {// 当前为memo[j][j+i]
+				if (s[j] == s[j + i] && ((j + 1 > j + i - 1) || (memo[j + 1][j + i - 1] == true))) {
+					memo[j][i + j] = true;
+					if (maxLength < i) {
+						maxJ = j;
+						maxLength = i;
+					}
+				}		
+			}
+		return s.substr(maxJ, maxLength+1);
+	}
+};
+//时间复杂度为O(N^2)
+//leetcode上用时68ms beats46.61&的提交记录
