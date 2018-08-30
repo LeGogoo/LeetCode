@@ -1,0 +1,75 @@
+//经典问题，用2个队列实现栈
+class MyStack {
+private:
+    queue<int>queue1;
+    queue<int>queue2;
+public:
+    /** Initialize your data structure here. */
+    MyStack() {
+        queue1 = queue<int>();
+        queue2 = queue<int>();
+    }
+    
+    /** Push element x onto stack. */
+    void push(int x) {
+        //同一时间只有一个queue里有值，另外一个知识==只是用来辅助操作
+        if(queue1.empty())
+            queue2.push(x);
+        else queue1.push(x);
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        queue<int> *queueVal;
+        queue<int> *queueEmpty;
+        if(queue1.empty()){
+            queueVal=&queue2;
+            queueEmpty=&queue1;
+        }
+        else{
+            queueVal=&queue1;
+            queueEmpty=&queue2;
+        }
+        int queueValSize=(int)(*queueVal).size();
+        while(queueValSize>1){
+            (*queueEmpty).push((*queueVal).front());
+            (*queueVal).pop();
+            queueValSize--;
+        }
+        int res=(*queueVal).front();
+        (*queueVal).pop();
+        return res;
+    }
+    
+    /** Get the top element. */
+    int top() {
+        queue<int> *queueVal;
+        queue<int> *queueEmpty;
+        if(queue1.empty()){
+            queueVal=&queue2;
+            queueEmpty=&queue1;
+        }
+        else{
+            queueVal=&queue1;
+            queueEmpty=&queue2;
+        }
+        int queueValSize=(int)(*queueVal).size();
+        while(queueValSize>1){
+            (*queueEmpty).push((*queueVal).front());
+            (*queueVal).pop();
+            queueValSize--;
+        }
+        int res=(*queueVal).front();
+        (*queueEmpty).push(res);
+        (*queueVal).pop();
+        return res;
+    }
+    
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return queue1.empty()&&queue2.empty();
+    }
+};
+
+//push() 的时间复杂度为O(1) pop()和top()的时间复杂度都为O(N)
+//leetcode用时0ms beats100%的提交记录
