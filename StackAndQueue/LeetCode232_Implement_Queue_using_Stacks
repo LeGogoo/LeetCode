@@ -1,0 +1,49 @@
+//经典问题 用2个栈实现队列
+class MyQueue {
+private:
+    stack<int>stack1;
+    stack<int>stack2;
+public:
+    /** Initialize your data structure here. */
+    MyQueue() {
+        stack1=stack<int>();
+        stack2=stack<int>();
+    }
+    
+    /** Push element x to the back of queue. */
+    void push(int x) {
+        stack1.push(x);
+    }
+    
+    /** Removes the element from in front of queue and returns that element. */
+    int pop() {
+        
+        assert(!stack1.empty()||!stack2.empty());
+        if(stack2.empty()&&!stack1.empty()){
+            while(!stack1.empty()){
+                stack2.push(stack1.top());
+                stack1.pop();
+            }
+        }
+        int res = stack2.top();
+        stack2.pop();
+        return res;
+    }
+    
+    /** Get the front element. */
+    int peek() {
+        assert(!stack1.empty()||!stack2.empty());
+        if(stack2.empty())
+            while(!stack1.empty()){
+                stack2.push(stack1.top());
+                stack1.pop();
+            }
+        return stack2.top();
+    }
+    
+    /** Returns whether the queue is empty. */
+    bool empty() {
+        return stack1.empty()&&stack2.empty();
+    }
+};
+//此种方法push的时间复杂度为O(N)，pop 和 peek的时间复杂度都为 O(1)/O(N)
