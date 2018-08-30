@@ -17,3 +17,5 @@ public:
         return memo[n];
     }
 };
+//时间复杂度是O(N^2)
+//leetcode用时4ms beats%24.95%的提交记录
