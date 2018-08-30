@@ -1,0 +1,59 @@
+//经典问题，先去找规律
+//如前序：3,9,20,15,7 中序：9,3,15,20,7
+//首先在前序中可以确定整棵树的根节点为 3
+//再去中序中知道了   9  3  15 20 7
+//          -左子树-  根  -右子树-
+//将3的left连上9 再去看3的右子树
+//去先序中找到3的右子树的根节点为20
+//去中序中知道了20的左子树为13 右子树为7
+//至此整棵树建立完毕
+
+//总结思路：
+//规定一个前序范围和中序范围
+//先找到前序范围中的第一个数作为当前根
+//去中序范围中找到这个数 之后找到以这个数字作为根的左子树长度和右子树长度
+//去先序中将当前根的左子树指向左子树长度的第一个数以左子树作为新的根继续，将当前根的右子树指向右子树长度里的第一个数以右子树作为新的根继续
+//要同时维护先序的范围和中序的范围
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+class Solution {
+private:
+    vector<int> *preorderList, *inorderList;
+    TreeNode* buildTreeByRange(int preStart,int preEnd,int inoStart,int inoEnd){
+        //将先序列中的第一个建为当前根
+        TreeNode *newNode = new TreeNode((*preorderList)[preStart]);
+       //去中序列表中找到这个值
+        int left = 0;
+        for(int i = inoStart;i < inoEnd;i++){
+            if((*inorderList)[i]==newNode->val){
+                break;
+            }
+            left++;
+        }
+        //找到了，当前的左子树长度为left，右子树长度为inoEnd-inoStart-left
+        int right = inoEnd - inoStart - left;
+        if(left>0)
+            newNode->left = buildTreeByRange(preStart+1,preStart+left,inoStart,inoStart+left-1);
+        if(right>0)
+            newNode->right = buildTreeByRange(preStart+left+1,preEnd,inoStart+left+1,inoEnd);
+        return newNode;
+    }
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int listSize=(int)preorder.size();
+        if(listSize==0)
+            return NULL;
+        preorderList = &preorder;
+        inorderList = &inorder;
+        return buildTreeByRange(0,listSize-1,0,listSize-1);
+    }
+};
+
+//时间复杂度为O(NlongN)? 不确定 感觉像
+//leetcode上用时24ms beats%40.14%的提交记录
