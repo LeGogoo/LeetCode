@@ -1,0 +1,37 @@
+//初一看，想的遍历数组，找到第一个比前一个值小的数
+//好像这样这个题水的有点太过分了
+//利用二分查找法的方式去找数
+//旋转把原数组分成了2部分，旋转操作的部分（前面） ， 没有操作到的部分（后面）
+//3个下标 start end mid=start+(end-start)/2
+//当mid>start时，说明mid属于原来后面的那部分 将start制为mid
+//当mid<start时，说明mid属于原来前面的那部分 将end制为mid
+//题目保证了mid!=start ，可以想象，如果mid可以==start，将会需要考虑更多情况
+//当start+1==end时，说明这2个下标卡在了旋转后的分界点左右，最小值就是end下标对应的值
+class Solution {
+private:
+    int findMinByBinarySearch(const vector<int>& nums,int start,int end){
+        if(start + 1 == end)
+            return nums[end];
+        int mid = start + (end - start)/2;
+        if(nums[mid] > nums[start])
+            return findMinByBinarySearch(nums,mid,end);
+        else if(nums[mid] < nums[start])
+            return findMinByBinarySearch(nums,start,mid);
+        else
+            assert("error input!");
+        return -1;
+    }
+public:
+    int findMin(vector<int>& nums) {
+        int numsSize = (int)nums.size();
+        assert(numsSize>0);
+        if(numsSize == 1)
+            return nums[0];
+        if(nums[0]<nums[numsSize-1])
+            return nums[0];
+        return findMinByBinarySearch(nums,0,numsSize-1);
+    }
+};
+
+//时间复杂度为O(logN)
+//leetcode上用时4ms beats98.22%的提交记录
