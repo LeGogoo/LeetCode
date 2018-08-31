@@ -1,0 +1,72 @@
+//此方法超时了
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        assert(divisor!=0);
+        long long int dividend1 = dividend;
+        long long int divisor1 = divisor;
+        long long int a,b;
+        long long int res = 0;
+        a = abs(dividend1);
+        b = abs(divisor1);
+        if(a<b)
+            return 0;
+        a -= b;
+        while(a>=0){
+            res ++;
+            a -= b;
+        }
+        if(res>INT_MAX)
+            return INT_MAX;
+        if(res<INT_MIN)
+            return INT_MIN;
+        if((dividend1>0&&divisor1>0)||(dividend1<0&&divisor1<0))
+            return (int)res;
+        else
+            return (int)-res;
+    }
+};
+
+//优化：二分的思路
+//每次把除数*2 如果将会大于被除数
+//把被除数减去当前的累加值 再做上一个操作
+//如 108 5
+//   108 5*1 5*2 5*4 ... 5*16 (5*32>108) 结果为14
+//   108-5*16=28 5*1 5*2 5*4 (5*8>28) 结果为14+4=20
+//   28-20=8 5*1 (5*2>8) 结果为20+1=24
+//   (8-5=3)<5结束
+
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        assert(divisor!=0);
+        long dividend1 = dividend;
+        long divisor1 = divisor;
+        long a,b;
+        long res = 0;
+        long sum = 0;
+        a = abs(dividend1);
+        b = abs(divisor1);
+        if(a<b)
+            return 0;
+        while(b <= a){
+            long count = 1;
+            sum = b;
+            while(sum + sum <= a){
+                sum += sum;
+                count += count;
+            }
+            res += count;
+            a = a - sum;
+        }
+        if((dividend1>0&&divisor1>0)||(dividend1<0&&divisor1<0)){
+            if((long)res == (long)INT_MAX + 1)
+                return INT_MAX;
+            return (int)res;
+        }
+        else
+            return (int)-res;
+    }
+};
+//时间复杂度为(logN) 
+//leetcode用时20ms beats 79.11%的提交记录
