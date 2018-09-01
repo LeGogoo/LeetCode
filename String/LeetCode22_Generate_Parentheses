@@ -1,0 +1,38 @@
+//简单题，用一个递归就解决了，因为要输出结果，也没必要去找规律了
+class Solution {
+private:
+	vector<string> res;
+	void generate(string nowString,int left,int right) {
+		assert(left <= right);
+		if (left == 0 && right == 0) {
+			res.push_back(nowString);
+			return;
+		}
+		if (left == 0) {
+			for (int i = 0; i < right; i++) {
+				nowString = nowString + ")";
+			}
+			res.push_back(nowString);
+			return;
+		}
+		if (left == right)
+			generate(nowString + "(", left - 1, right);
+		if (left < right) {
+			generate(nowString + "(", left - 1, right);
+			generate(nowString + ")", left, right - 1);
+		}
+		return;
+	}
+public:
+	vector<string> generateParenthesis(int n) {
+		assert(n >= 0);
+		res.clear(); 
+		generate("", n, n);
+		return res;
+	}
+};
+//时间复杂度不好计算，可以粗略看成是每个元素都可能是'('或是')'2种可能 也就是O(2^N)的可能性，而每次判断是否合法最坏需要n次判断 故时间复杂度为O(N*2^N)不是很能确定
+//但是不难发现和结果的个数是N倍的关系 因为没产生一个结果都需要n次运算 经测试，n从1-11 结果个数为：1 2 5 14 42 132 429 1430 4862 16796 58786
+//指数级的增长速度，大概为4^N的计算次数 故大概需要(N*4^N)次计算，时间复杂度为O(N*2^N)
+//非常可怕的一个复杂度 leetcode上的测试用例也只有8个
+//leetcode用时0ms beats100%的提交记录
