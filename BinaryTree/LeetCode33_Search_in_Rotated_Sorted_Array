@@ -1,0 +1,47 @@
+//先用2分搜索找到断层点，从而得到前后的长度，如45678123前面长为3后面为5
+//索引值在原数组中的对应关系：小于5则加3 大于等于5则减5 
+//至此当前数组便可当作一个升序数组进行二分查找，每次通过mid找到的索引值要经过对应关系的规则变化
+
+class Solution {
+private:
+	vector<int> numsList;
+	int findPoint(int start, int end) {
+		//返回旋转前，后面部分的长 如45678123 返回5
+		int mid = start + (end - start) / 2;
+		if (start + 1 == end)
+			return end;
+		if (numsList[mid] > numsList[start])
+			return findPoint(mid, end);
+		else 
+			return findPoint(start, mid);
+	}
+	int binarySearch(int start, int end, int targrt, int lengthFront,int lengthBack) {
+		//搜索[start,end]
+		int mid = start + (end - start) / 2;
+		int realMid = mid < lengthBack ? mid + lengthFront : mid - lengthBack;
+		if (numsList[realMid] > targrt && mid - 1 >= start)
+			return binarySearch(start, mid - 1, targrt, lengthFront, lengthBack);
+		else if (numsList[realMid] < targrt && end >= mid + 1)
+			return binarySearch(mid + 1, end, targrt, lengthFront, lengthBack);
+		else if (numsList[realMid] == targrt) {
+			return realMid;
+		}
+		return -1;
+	}
+public:
+	int search(vector<int>& nums, int target) {
+		numsList = nums;
+		int nS = numsList.size();
+		if (nS == 0)
+			return -1;
+		int lengthFront;
+		if (numsList[0] <= numsList[nS - 1])
+			lengthFront = nS;
+		else
+			lengthFront = findPoint(0, nS - 1);
+		int lengthBack = nS - lengthFront;
+		return binarySearch(0, nS-1, target, lengthFront, lengthBack);
+	}
+};
+//时间复杂度为O(longN) 其中二分查找断点计算logN次，再二分搜索也是logN次
+//leetcode用时4ms beats99.75%的提交记录
