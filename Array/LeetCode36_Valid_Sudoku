@@ -1,0 +1,42 @@
+//水题，分别判断行，列，块是否有重复就好
+class Solution {
+public:
+    bool isValidSudoku(vector<vector<char>>& board) {
+        for(int i=0;i<9;i++){
+            //9行，9列，9块
+            bool isUsed[10];
+            fill(isUsed,isUsed+10,false);
+            for(int j=0;j<9;j++){
+                if(board[i][j]=='.')
+                    continue;
+                if(isUsed[board[i][j]-'0']==true)
+                    return false;
+                isUsed[board[i][j]-'0']=true;
+            }
+            //行判断结束
+            fill(isUsed,isUsed+10,false);
+            for(int j=0;j<9;j++){
+                if(board[j][i]=='.')
+                    continue;
+                if(isUsed[board[j][i]-'0']==true)
+                    return false;
+                isUsed[board[j][i]-'0']=true;
+            }
+            //列判断结束
+            fill(isUsed,isUsed+10,false);
+            int y=i/3*3;
+            int x=i%3*3;
+            for(int yI=0;yI<3;yI++)
+                for(int xI=0;xI<3;xI++){
+                    if(board[y+yI][x+xI]=='.')
+                        continue;
+                    if(isUsed[board[y+yI][x+xI]-'0']==true)
+                        return false;
+                    isUsed[board[y+yI][x+xI]-'0']=true;
+                }
+        }
+        return true;
+    }
+};
+//由于数独盘的大小规定了大小为9*9 故时间复杂度为O(1) 具体运算的次数为3*9*9
+//leetcode上耗时16ms beats86.53%的提交记录
