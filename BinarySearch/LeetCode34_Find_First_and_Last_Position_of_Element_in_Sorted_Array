@@ -1,0 +1,76 @@
+//先用二分搜索法找到一个 target
+//再用二分搜索分别向左和向右找到起点和终点
+
+class Solution {
+private:
+    int resStart,resEnd;
+    int binarySearch(const vector<int>& nums,int start,int end,int target){
+        //范围[start,end]
+        if(start > end)
+            return -1;
+        int mid = start + (end - start)/2;
+        if(nums[mid] > target)
+            return binarySearch(nums,start,mid-1,target);
+        else if(nums[mid] < target)
+            return binarySearch(nums, mid+1, end, target);
+        else//nums[mid]==target
+            return mid;
+    }
+    void binarySearchStart(const vector<int>& nums,int start,int end,int target){
+        //往左边找起点 左边一定是小于或是等于 范围[start,end]
+        if(start > end)
+            return;
+        int mid = start + (end - start) / 2;
+        if(nums[mid] == target){
+            resStart = mid;
+            return binarySearchStart(nums,start,mid-1,target);
+        }
+        if(nums[mid] < target)
+            return binarySearchStart(nums,mid+1,end,target);
+        else{
+            assert("Error Input");
+            return;
+        }
+    }
+    
+    void binarySearchEnd(const vector<int>& nums,int start,int end,int target){
+        //往右边找终点 右边一定是大于或是等于 范围[start,end]
+        if(start > end)
+            return;
+        int mid = start + (end - start) / 2;
+        if(nums[mid] == target){
+            resEnd = mid;
+            return binarySearchEnd(nums,mid+1,end,target);
+        }
+        if(nums[mid] > target)
+            return binarySearchEnd(nums,start,mid-1,target);
+        else{
+            assert("Error Input");
+            return;
+        }
+    }
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        vector<int> res(2,-1);
+        int numsSize = (int)nums.size();
+        if(numsSize == 0)
+            return res;
+        int start = binarySearch(nums,0,numsSize-1,target);
+        resStart = resEnd = -1;
+        if(start!=0){
+            binarySearchStart(nums,0,start,target);
+            res[0]=resStart;
+        }
+        else
+            res[0]=start;
+        if(start!=numsSize-1){
+            binarySearchEnd(nums,start,numsSize-1,target);
+            res[1]=resEnd;
+        }
+        else
+            res[1]=start;
+        return res;
+    }
+};
+//时间复杂为O(longN)
+//leetcode上耗时8ms beats97.36%的提交记录
