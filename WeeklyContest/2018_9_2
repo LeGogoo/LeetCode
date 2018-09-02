@@ -32,6 +32,23 @@ public:
 	}
 };
 
+//一个更优雅的写法：
+class Solution {
+public:
+	bool isMonotonic(vector<int>& A) {
+		bool big = true;
+		bool small = true;
+		for (int i = 1; i < A.size(); i++) {
+			if (A[i] > A[i - 1])
+				big = false;
+			else if (A[i] < A[i - 1])
+				small = false;
+			if (!big && !small)
+				return false;
+		}
+		return true;
+	}
+};
 水题2：897. 递增顺序查找树
 给定一个二叉树，重新排列树，使树中的最小值现在是树的根结点，并且每个结点没有左子结点，只有一个右子结点。
 示例：
