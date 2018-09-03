@@ -1,0 +1,55 @@
+//经典问题，实现string的乘法，过程就是模拟手算
+class Solution {
+private:
+    string stringX(const string& num1,const char& num2){
+        string res;
+        int carry = 0;
+        for(int i = (int)num1.size() - 1;i >= 0;i--){
+            int bit = (num1[i]-'0')*(num2-'0') + carry;
+            res.insert(res.begin(),bit % 10 + '0');
+            carry = bit / 10;
+        }
+        if(carry != 0)
+            res.insert(res.begin(),carry+'0');
+        if(res[0] == '0')
+            res = "0";
+        return res;
+    }
+    string stringAdd(const string& num1,const string& num2){
+        string res;
+        int num1i = (int)num1.size() - 1;
+        int num2i = (int)num2.size() - 1;
+        int carry = 0;
+        while(num1i >= 0 || num2i >= 0){
+            int bit;
+            if(num1i < 0)
+                bit = num2[num2i] - '0' + carry;
+            else if(num2i < 0)
+                bit = num1[num1i] - '0' + carry;
+            else
+                bit = num1[num1i] - '0' + num2[num2i] - '0' + carry;
+            res.insert(res.begin(),bit % 10 + '0');
+            carry = bit / 10;
+            num1i--;
+            num2i--;
+        }
+        if(carry != 0)
+            res.insert(res.begin(),carry+'0');
+        return res;
+    }
+public:
+    string multiply(string num1, string num2) {
+        //模拟手算，num1在上面，num2在下面
+        int num2Size=(int)num2.size();
+        string res = "0";
+        for(int i = 0;i < num2Size;i++){
+            string onceRes = stringX(num1,num2[num2Size-1-i]);
+            if(onceRes != "0")
+                onceRes.insert(onceRes.end(),i,'0');
+            res = stringAdd(res,onceRes);
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N1*N2) N1,N2为2个字符串的长度
+//leetcode上耗时28ms beats11.31%的提交记录
