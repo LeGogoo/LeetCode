@@ -1,0 +1,39 @@
+//很简单的规律：方向依次为右下左上，当都到尽头或是遇到之前遍历过的元素时改变方向
+//当改变方向后还是走不通，退出遍历
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        vector<int> res;
+        int matrixSizeX = (int)matrix.size();
+        if(matrixSizeX == 0)
+            return res;
+        int matrixSizeY = (int)matrix[0].size();
+        vector<vector<bool>>isUsed(matrixSizeX,vector<bool>(matrixSizeY,false));
+        int x,y;
+        int way = 0;//0,1,2,3 右下左上
+        int wayChange[4][2]={
+            {0,1},{1,0},{0,-1},{-1,0}
+        };
+        x = y =0;
+        res.push_back(matrix[x][y]);
+        isUsed[x][y] = true;
+        while(true){
+            int nextX = x + wayChange[way][0];
+            int nextY = y + wayChange[way][1];
+            if(nextX < 0 || nextX >= matrixSizeX || nextY < 0 || nextY >= matrixSizeY || isUsed[nextX][nextY] == true){
+                way = (way + 1) % 4;
+                nextX = x + wayChange[way][0];
+                nextY = y + wayChange[way][1];
+                if(nextX < 0 || nextX >= matrixSizeX || nextY < 0 || nextY >= matrixSizeY || isUsed[nextX][nextY] == true)
+                    break;
+            }
+            res.push_back(matrix[nextX][nextY]);
+            isUsed[nextX][nextY] = true;
+            x = nextX;
+            y = nextY;
+        }
+        return res;
+    }
+};
+//时间复杂度为O(M*N)
+//leetcode耗时0ms
