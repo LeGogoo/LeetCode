@@ -1,0 +1,53 @@
+//先想到直接暴力dfs 
+class Solution {
+private:
+    vector<bool> isUsed;
+    bool canJumpToEnd(const vector<int>& nums,int now){
+        if(now + nums[now] >= (int)nums.size() - 1)
+            return true;
+        if(isUsed[now] == true)
+            return false;
+        isUsed[now] = true;
+        for(int i = nums[now];i >= 1;i--){
+            if(canJumpToEnd(nums,now+i)==true)
+                return true;
+        }
+        return false;
+    }
+public:
+    bool canJump(vector<int>& nums) {
+        int numsSize = (int)nums.size();
+        if(numsSize == 0)
+            return true;
+        isUsed = vector<bool>(numsSize,false);
+        return canJumpToEnd(nums,0);
+    }
+};
+//时间复杂度为O(2^N)
+//时间消耗太大 leetcode上花了超过1s
+
+//用动态规划优化：
+//F(i)为考虑前i个点所能达到的最远距离
+//F(i)=max(F(i-1),nums[i]+i);
+//if F(i-1)<i 代表永远来不到i这个点了，返回false；
+
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int numsSize = (int)nums.size();
+        if(numsSize == 0)
+            return true;
+        vector<int> memo(numsSize,-1);
+        memo[0] = nums[0];
+        for(int i = 1;i < numsSize;i++){
+            if(memo[i-1]<i)
+                return false;
+            memo[i]=max(memo[i-1],i+nums[i]);
+            if(memo[i]>=numsSize-1)
+                return true;
+        }
+        return true;
+    }
+};
+//时间复杂度为O(N)
+//leetcode上耗时8ms beats 98.00%的提交记录
