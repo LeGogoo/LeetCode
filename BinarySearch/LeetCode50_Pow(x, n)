@@ -1,0 +1,24 @@
+//二分搜索法实现
+class Solution {
+private:
+    double binaryMyPow(double x, int n) {
+        if(n == 0)
+            return 1;
+        if(n == 1)
+            return x;
+        double a =  binaryMyPow(x, n/2);
+        if(n % 2 == 0)
+            return a * a;
+        else
+            return a * a * x;
+    }
+public:
+    double myPow(double x, int n) {
+        double res = binaryMyPow(x,abs(n));
+        if(n < 0)
+            res = 1 / res;
+        return res;
+    }
+};
+//时间复杂度为O(N)
+//leetcode上耗时8ms beats85.70%的提交记录
