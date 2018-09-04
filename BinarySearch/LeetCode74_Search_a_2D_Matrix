@@ -1,0 +1,31 @@
+//简单的二分搜索的变形
+class Solution {
+private:
+    int m,n;
+    bool binarySearch(int start,int end,int target,const vector<vector<int>>& matrix){
+        if(start > end)
+            return false;
+        int mid = start + (end - start) / 2;
+        int x,y;
+        x = mid / m;
+        y = mid % m;
+        if(target < matrix[x][y]){
+            return binarySearch(start,mid-1,target,matrix);
+        }
+        else if(target > matrix[x][y]){
+            return binarySearch(mid+1,end,target,matrix);
+        }
+        else //target == matrix[x][y]
+            return true;
+    }
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        n = (int)matrix.size();
+        if(n == 0)
+            return false;
+        m = (int)matrix[0].size();
+        return binarySearch(0,m*n-1,target,matrix);
+    }
+};
+//时间复杂度为O(logN)
+//leetcode上耗时12ms beats69.83%的提交记录
