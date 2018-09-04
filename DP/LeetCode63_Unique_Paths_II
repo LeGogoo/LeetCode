@@ -1,0 +1,33 @@
+//简单的DP
+//F(i,j)=为在[i][j]点的路径数
+//F(i,j)=F(i-1)+F(j-1)
+//注意当[i][j]点为障碍时 F(i,j)=0
+//当第一行或值第一列出现了一个障碍后，这个位置及后面的位置F(i,j)都为0
+class Solution {
+public:
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        int m = (int)obstacleGrid[0].size();
+        int n = (int)obstacleGrid.size();
+        vector<vector<int>>memo(n,vector<int>(m,1));
+        bool x = false;
+        for(int i = 0;i < m;i++)
+            if(x == true || obstacleGrid[0][i] == 1){
+                memo[0][i] = 0;
+                x = true;
+            }
+        x=false;
+        for(int i = 0;i < n;i++)
+            if(x == true || obstacleGrid[i][0] == 1){
+                memo[i][0] = 0;
+                x = true;
+            }
+        for(int i = 1;i < n;i++)
+            for(int j = 1;j < m;j++){
+                if(obstacleGrid[i][j] ==1) memo[i][j] = 0;
+                else memo[i][j] = memo[i-1][j] + memo[i][j-1];
+            }
+        return memo[n-1][m-1];
+    }
+};
+//时间复杂度为O(M*N) 空间复杂度为O(M*N)
+//leetcode上耗时4ms beats88.74%的提交记录
