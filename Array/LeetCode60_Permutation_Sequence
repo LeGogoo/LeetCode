@@ -1,0 +1,68 @@
+//枚举法，超时了
+class Solution {
+private:
+    int end;
+    int nowEnd;
+    string findString(string now,int n){
+        if((int)now.size()==n){
+            nowEnd++;
+            if(nowEnd == end)
+                return now;
+            return "";
+        }
+        for(int i = 1;i <= n;i++){
+            int j;
+            for(j = 0;j < (int)now.size(); j++)
+                if(now[j] == i+'0')
+                    break;
+            if(j == (int)now.size()){
+                string res = findString(now+to_string(i),n);
+                if(res != "")
+                    return res;
+            }
+        }
+        return "";
+    }
+public:
+    string getPermutation(int n, int k) {
+        end = k;
+        nowEnd = 0;
+        return findString("",n);
+    }
+};
+//还是得去找规律
+//一个数一个数的找，每个数都会在剩余个数的阶乘后进位
+//如n=4 第一个数会在4!(6)后进一 第二个数会在3!(2)后进一 第三个数会在2!(1)后进一 最后一个数不用找，就是最后剩下的数
+//需要用一个vector来存剩下的数 每次进一就是去找这个数组中的下一个数
+class Solution {
+private:
+    int countFactorial(int n){
+        int res = 1;
+        for(int i = 1;i < n;i++)
+            res *= i;
+        return res;
+    }
+public:
+    string getPermutation(int n, int k) {
+        k--;
+        string res;
+        vector<int> notUsed(n,0);
+        for(int i = 0;i < n;i++){
+            notUsed[i] = i+1;
+        }
+        for(int i = 0;i < n-1;i++){
+            int Factorial = countFactorial(n-i);
+            int index = k / Factorial;
+            res.push_back(notUsed[index]+'0');
+            k %= Factorial;
+            vector<int>::iterator needErase = notUsed.begin();
+            for(int it = 0;it < index;it++)
+                needErase++;
+            notUsed.erase(needErase);
+        }
+        res.push_back(notUsed[0]+'0');
+        return res;
+    }
+};
+//时间复杂度为O(N^2) 要n轮操作，而erase操作的复杂度也是n 空间复杂度为O(N)
+//leetcode上耗时4ms beats97.84%的提交记录
