@@ -1,0 +1,24 @@
+//简单的回朔
+class Solution {
+private:
+    int numsSize;
+    void dfs(vector<int>& nums,vector<vector<int>> &subset,vector<int> &now,int index){
+        subset.push_back(now);
+        for(int i = index;i < numsSize;i++){
+            now.push_back(nums[i]);
+            dfs(nums,subset,now,i+1);
+            now.pop_back();
+        }
+    }
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> now;
+        numsSize = (int)nums.size();
+        if(numsSize != 0)
+            dfs(nums,res,now,0);
+        return res;
+    }
+};
+//时间复杂度为O(2^N)
+//果然测试给的很小 10个样例，leetcode耗时0ms
