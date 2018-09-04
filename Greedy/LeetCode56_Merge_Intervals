@@ -1,0 +1,29 @@
+//先排序再贪心，每个区间总是尽可能的去合并区间，排序按照起点从小到大，如起点相同终点从小到大的顺序
+class Solution {
+public:
+    vector<Interval> merge(vector<Interval>& intervals) {
+        vector<Interval> res;
+        int iS = (int)intervals.size();
+        if(iS == 0)
+            return res;
+        sort(intervals.begin(),intervals.end(),[](const Interval a,const Interval b) -> bool{
+            if(a.start == b.start)return a.end < b.end;
+            return a.start < b.start;
+        });
+        int start = intervals[0].start;
+        int end = intervals[0].end;
+        for(int i = 1;i < iS;i++){
+            if(intervals[i].start<=end){
+                if(intervals[i].end>end)end = intervals[i].end;
+                continue;
+            }
+            res.push_back(Interval(start,end));
+            start = intervals[i].start;
+            end = intervals[i].end;
+        }
+        res.push_back(Interval(start,end));
+        return res;
+    }
+};
+//时间复杂度为O(N)
+//leetcode上用时16ms beats44.67%的提交记录
