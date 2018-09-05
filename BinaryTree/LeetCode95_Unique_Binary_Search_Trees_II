@@ -1,0 +1,49 @@
+//此题的分析参考第96题：../LeetCode96_Unique_Binary_Search_Trees/
+//区别在于此题要打印所有的样例，故含相同节点个数的树得全部建立出来
+//F(i,j)存了所有包含i...j节点的树
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+class Solution {
+public:
+    vector<TreeNode*> generateTrees(int n) {
+        if(n == 0)
+            return vector<TreeNode*>();
+        vector<vector<vector<TreeNode*>>>memo(n,vector<vector<TreeNode*>>(n,vector<TreeNode*>()));
+        for(int add = 0;add < n;add++)
+            for(int i = 0;i + add < n;i++){
+                int j = i + add;
+                if(i == j){
+                    memo[i][j].push_back(new TreeNode(i + 1));
+                    continue;
+                }
+                for(auto itRight = memo[i+1][j].begin();itRight != memo[i+1][j].end();itRight++){
+                    TreeNode* newNode = new TreeNode(i+1);
+                    newNode->right = *itRight;
+                    memo[i][j].push_back(newNode);
+                }
+                for(auto itLight = memo[i][j-1].begin();itLight != memo[i][j-1].end();itLight++){
+                    TreeNode* newNode = new TreeNode(j+1);
+                    newNode->left = *itLight;
+                    memo[i][j].push_back(newNode);
+                }
+                for(int z = 0;z <= add - 2;z++){//i...i+add
+                    for(auto itLeft = memo[i][i+z].begin();itLeft != memo[i][i+z].end();itLeft++)
+                        for(auto itRight = memo[i+z+2][j].begin();itRight != memo[i+z+2][j].end();itRight++){
+                            TreeNode* newNode = new TreeNode(i+z+1+1);
+                            newNode->left = *itLeft;
+                            newNode->right = *itRight;
+                            memo[i][j].push_back(newNode);
+                        }
+                    
+                }
+            }
+        return memo[0][n-1];
+    }
+};
+//这道题真的得思路清晰的时候慢慢写，折磨题，写的时候有点急，循环有点多，调试了半天。。
+//时间复杂度为O(2^N*N)2^N是可能的数量，N为每次结果需要遍历的次数
+//leetcode用时12ms beats100%的提交记录
