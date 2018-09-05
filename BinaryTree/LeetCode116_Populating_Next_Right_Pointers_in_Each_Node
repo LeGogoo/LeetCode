@@ -1,0 +1,24 @@
+//开始对题目的条件描述产生了误会，在递归函数中使用的变量是属于栈开销的，故不与限制条件冲突
+//此题顿时索然无味，一直在各种尝试层序遍历的递归结构。。。
+//采用2个参数来记录当前点和父节点，可以判断出，当前点事左孩子还是右孩子
+class Solution {
+private:
+    void preOrder(TreeLinkNode* now,TreeLinkNode* last){
+        if(now == NULL)
+            return;
+        if(last != NULL){
+            if(now == last->left)
+                now->next = last->right;
+            else if(now == last->right && last->next != NULL)
+                now->next = last->next->left;
+        }
+        preOrder(now->left,now);
+        preOrder(now->right,now);
+    }
+public:
+    void connect(TreeLinkNode *root) {
+        preOrder(root,NULL);
+    }
+};
+//时间复杂度为O(N) N为节点个数
+//leetcode上耗时24ms beats18.97%的提交记录
