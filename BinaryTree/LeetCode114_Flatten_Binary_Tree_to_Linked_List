@@ -1,0 +1,33 @@
+//递归操作，采用后序遍历（保证最后对根节点的左右进行移位操作）
+//递归返回的对当前r根来说的最右边叶子节点
+//访问到根时，进行对应操作
+//注意左边为空（直接返回），右边为空（直接把左边接到右边）2种情况
+class Solution {
+private:
+    TreeNode* postOrder(TreeNode* root){
+        if(root == NULL)
+            return NULL;
+        if(root->left == NULL && root->right == NULL)
+            return root;
+        TreeNode* left = postOrder(root->left);
+        TreeNode* right = postOrder(root->right);
+        if(left == NULL)
+            return right;
+        if(right == NULL){
+            root->right = root->left;
+            root->left = NULL;
+            return left;
+        }
+        TreeNode* rootRight = root->right;
+        root->right = root->left;
+        root->left = NULL;
+        left->right = rootRight;
+        return right;
+    }
+public:
+    void flatten(TreeNode* root){
+        postOrder(root);
+    }
+};
+//时间复杂度为O(N)N为节点个数
+//leetcode上耗时8ms beats98.92%的提交记录
