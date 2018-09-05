@@ -1,0 +1,33 @@
+//用2个迭代器分别指向当前位置和当前位置应该的值的位置
+//用2个int存修改后的上一个值和上上个值，当当前值等于上上个值的时候，当前位置应该的值的迭代器++
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int numsSize = (int)nums.size();
+        if(numsSize<3)
+            return numsSize;
+        auto indexNow = nums.begin();
+        auto indexValue = nums.begin();
+        int lastlast = nums[0];
+        int last = nums[1];
+        int length = 2;
+        indexNow ++;indexNow ++;
+        indexValue ++;indexValue ++;
+        while(indexValue != nums.end()){
+            if(*indexValue == lastlast){
+                indexValue++;
+                continue;
+            }
+            *indexNow = *indexValue;
+            lastlast = last;
+            last = *indexNow;
+            length ++;
+            indexValue++;
+            indexNow++;
+        }
+        return length;
+        
+    }
+};
+//时间复杂度为O(N)
+//leetcode上耗时12ms beats99.85%的提交记录
