@@ -1,0 +1,32 @@
+//最直接的方法，用hash表来存出现过的节点
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        unordered_set<ListNode*>isUsed;
+        for(ListNode* now = head;now != NULL;now = now->next){
+            if(isUsed.find(now)!=isUsed.end())
+                return true;
+            isUsed.insert(now);
+        }
+        return false;
+    }
+};
+//快慢指针的实现非常cool
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        if(head == NULL)
+            return false;
+        ListNode* fast = head;
+        ListNode* slow = head;
+        while(fast->next != NULL && fast->next->next !=NULL){
+            fast = fast->next->next;
+            slow = slow->next;
+            if(fast == slow)
+                return true;
+        }
+        return false;
+    }
+};
+//时间复杂度为O(N) N为节点个数
+//leetcode上耗时8ms beats98.85%的提交记录
