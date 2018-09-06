@@ -1,0 +1,45 @@
+//1.去多掉多余的空格
+//2.翻转整个字符串
+//3.对翻转后的字符串进行单词翻转
+//如sky   is  blue 1:sky is blue 2:eulb si yks 3:blue is sky
+class Solution {
+public:
+    void reverseWords(string &s) {
+        int sSize = (int)s.size();
+        if(sSize == 0)
+            return;
+        int now,should;
+        now = should = 1;
+        while(should < sSize){
+            if(s[should] == ' ' && s[should-1] == ' '){
+                should++;
+                continue;
+            }
+            s[now] = s[should];
+            now++;
+            should++;
+        }
+        //结束后now为s.size
+        s.erase(now,sSize - now + 1);
+        //删掉多余
+        for(int i = 0;i < now / 2;i++)
+            swap(s[i],s[now-i-1]);
+        int start = 0;
+        for(int i = 0;i <= now ;i++){
+            if(s[i] == ' ' || i == now){
+                for(int add = 0;add < (i - start) / 2;add++)
+                    swap(s[start+add],s[i - add - 1]);
+                start = i + 1;
+                if(i == now)
+                    break;
+            }
+        }
+        if(s[0] == ' ')
+            s.erase(0,1);
+        if(s[s.size()-1] == ' ')
+            s.erase(s.size()-1,1);
+        //头尾为空的情况
+    }
+};
+//时间复杂度为O(N)
+//leetcode耗时8ms beats48.96%的提交记录
