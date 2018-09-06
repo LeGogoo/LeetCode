@@ -1,0 +1,31 @@
+//先去后序中找到当前范围的最后一个节点，次节点便是当前的根节点
+//到中序中找到这个根节点 左子树为中序的左边 右子树为中序的右边
+class Solution {
+private:
+    TreeNode* in_post_orderBuildTree(vector<int>& inorder, vector<int>& postorder,int inStart,int inEnd,int postStart,int postEnd){
+        TreeNode* newNode = new TreeNode(postorder[postEnd]);
+        int leftLength = -1;
+        for(int i = 0;i + inStart <= inEnd;i++)
+            if(inorder[inStart+i] == postorder[postEnd]){
+                leftLength = i;
+                break;
+            }
+        if(leftLength == -1)
+            throw "Error inputList";
+        if(leftLength > 0)
+            newNode->left = in_post_orderBuildTree(inorder,postorder,inStart,inStart+leftLength-1,postStart,postStart+leftLength-1);
+        if(leftLength < inEnd - inStart)
+            newNode->right = in_post_orderBuildTree(inorder,postorder,inStart+leftLength+1,inEnd,postStart+leftLength,postEnd-1);
+        return newNode;
+    }
+public:
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        int inSize = (int)inorder.size();
+        TreeNode* res = NULL;
+        if(inSize == 0)
+            return res;
+        return in_post_orderBuildTree(inorder,postorder,0,inSize-1,0,inSize-1);
+    }
+};
+//时间复杂度为O(N)
+//leetcode耗时16ms beats81.76%的提交记录
