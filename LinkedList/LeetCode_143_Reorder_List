@@ -1,0 +1,22 @@
+//先把链表存进一个vector然后进行操作
+class Solution {
+public:
+    void reorderList(ListNode* head) {
+        if(head == NULL)
+            return;
+        vector<ListNode*> list;
+        for(ListNode* i = head;i != NULL;i=i->next)
+            list.push_back(i);
+        int left = 0;
+        int right = (int)list.size()-1;
+        while(left < right - 1){
+            list[left]->next = list[right];
+            list[right]->next = list[left+1];
+            left++;
+            right--;
+        }
+        list[right]->next = NULL;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(N)
+//leetcode上耗时44ms beats97.26%的提交记录
