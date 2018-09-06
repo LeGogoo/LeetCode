@@ -1,0 +1,31 @@
+参考141题
+证明过程：
+   当快慢指针相撞的时候，慢指针走了n步，快指针走了2n步
+   因为快指针每次后移两位，慢指针每次后移一位，所以不可能存在走的时候越过慢指针的情况，所以快指针也可看成走了n+环长(定义为y)步 故y=n
+   此时让慢指针继续走的话，还需要链表长(定义为l)-n步便可到达环的起始点
+   而l-n又刚好是从head出发到达起始点的距离
+   故此时我们让一个指针从head开始每次走一步，慢指针从这个相撞点也每次走一步，他们一定会在环的起始点相撞
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        if(head == NULL)
+            return NULL;
+        ListNode* fast = head;
+        ListNode* slow = head;
+        while(fast->next != NULL && fast->next->next !=NULL){
+            fast = fast->next->next;
+            slow = slow->next;
+            if(fast == slow){
+                ListNode* res = head;
+                while(res != slow){
+                    res = res->next;
+                    slow = slow->next;
+                }
+                return res;
+            }
+        }
+        return NULL;
+    }
+};
+//时间复杂度为O(N) N为链表节点个数 
+//leetcode上用时8ms beats99.85%的提交记录
