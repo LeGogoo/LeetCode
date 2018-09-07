@@ -1,0 +1,24 @@
+//由于可能出现负号导致最大值便最小值 存最大值最小值
+//F(i)为最后一个元素为下标为i的元素的序列所能得到的最大值，和最小值
+//F(i).Min = min(F(i-1).Min*nums[i],F(i-1).Max*nums[i],nums[i])
+//F(i).Max = max(F(i-1).Min*nums[i],F(i-1).Max*nums[i],nums[i])
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int numsSize = (int)nums.size();
+        assert(numsSize > 0);
+        int maxP = nums[0];
+        int nowMax = maxP;
+        int nowMin = maxP;
+        for(int i = 1;i < numsSize;i++){
+            int a = nowMax;
+            int b = nowMin;
+            nowMax = max(max(a * nums[i],b * nums[i]),nums[i]);
+            nowMin = min(min(a * nums[i],b * nums[i]),nums[i]);
+            maxP = max(maxP,nowMax);
+        }
+        return maxP;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(1)
+//leetcode 耗时4ms beats100%的提交记录
