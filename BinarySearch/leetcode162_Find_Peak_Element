@@ -1,0 +1,27 @@
+//这题挺赖的，。。。二分搜索
+//一定要注意到这个“你可以假设 nums[-1] = nums[n] = -∞。”这句话，这代表了最左边和最右边的元素是默认大于一边了的
+//如{1,2,3,4}这个列，1 默认大于左边 4 默认大于右边
+//可以理解为总是把index往大于的方向赶 当二分的left==right时便带便已经被往2个方向赶了 这时index对应的值便大于左边和右边
+//而恰巧是由于最左和最右默认大于一边，故不难想象这样赶出来的结果总是有解
+
+//如：{1,2,3,4} left=0 right=3 mid=1 2<3故往右边赶 left=2 right=3 3<4故往右边赶 left=3 right=3这时虽只被往一个方向赶过（右）但是4具有的特殊性质使此解有效
+//如：{4,3,2,1} 和上面的过程相同 最后left=right=0；
+//如：{1,2,3,6,5} left=0 right=4 mid=2 3<6往右边赶 left=3 right=4 mid=3 6>5故往左边赶 left=right=3 此时被往2个方向赶过使index=3返回3
+
+class Solution {
+public:
+    int findPeakElement(vector<int>& nums) {
+        int left = 0;
+        int right = (int)nums.size() - 1;
+        while(left != right){
+            int mid = left + (right - left) / 2;
+            if(nums[mid] > nums[mid+1])//向左赶
+                right = mid;//这里要注意一下，可以举个例子思考一下
+            else// < 向右赶 （==的情况已经在while()里判断了）
+                left = mid + 1;
+        }
+        return left;
+    }
+};
+//时间复杂度为O(logN)
+//leetcode耗时8ms beats30.61%的提交记录
