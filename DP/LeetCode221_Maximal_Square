@@ -27,7 +27,7 @@ public:
 		return Max*Max;  
 	}
 };
-//时间复杂度为O(N^3) N层 每层遍历N^2次，很不理想
+//时间复杂度为O(M*N^2) N*M层 每层遍历N次，很不理想
 //leetcode上耗时68ms beats4.40%的提交记录
 
 //优化方法就是数学方法
@@ -71,3 +71,5 @@ public:
 	}
 
 };
+//时间复杂度为O(M*N) 
+//leetcode耗时20ms beats71.60%的提交记录
