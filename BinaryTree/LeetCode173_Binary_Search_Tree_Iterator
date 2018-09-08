@@ -1,0 +1,38 @@
+//二分搜索树化递增序列就是中序遍历
+//可对空间复杂度的要求比较苛刻
+//在这个时间复杂度的要求下应该不可能直接存下所有值
+//那么解决方案就是边next 边存新的点
+
+class BSTIterator {
+private:
+	stack<TreeNode*>nodeStack;
+public:
+	BSTIterator(TreeNode *root) {
+		nodeStack = stack<TreeNode*>();
+		while (root != NULL) {
+			nodeStack.push(root);
+			root = root->left;
+		}
+	}
+
+	/** @return whether we have a next smallest number */
+	bool hasNext() {
+		return !nodeStack.empty();
+	}
+
+	/** @return the next smallest number */
+	int next() {
+		TreeNode* node = nodeStack.top();
+		nodeStack.pop();
+		int res = node->val;
+		node = node->right;
+		while (node != NULL) {
+			nodeStack.push(node);
+			node = node->left;
+		}
+		return res;
+	}
+};
+//next() BSTIterator()操作一共执行了n次 遍历完了n个节点 平均时间复杂度为O(N)
+//空间使用最大时用了h个空间，空间复杂度为O(h)
+//leetcode耗时16ms beats99.56%的提交记录
