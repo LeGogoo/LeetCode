@@ -1,0 +1,73 @@
+//F(i,j)代表上一层弟i-j个元素全为1的深度
+//F(i,j) = isAllOne(i,j)?0:F(i,j)+1;
+//为了快速判断isAllOne(i,j) 用一个数组count[j]记录前j个元素含的1的数量 如果count[j]-count[i-1]=j-i+1 则isAllOne 为true
+class Solution {
+public:
+	int maximalSquare(vector<vector<char>>& matrix) {
+		size_t matrixSize = matrix.size();
+		if (matrixSize == 0)
+			return 0;
+		size_t length = matrix[0].size();
+		vector<int> count(length + 1, 0); 
+		vector<vector<int>>memo(length + 1, vector<int>(length + 1, 0));
+		int Max = 0;
+		for (size_t i = 0; i < matrixSize; i++) {
+			for (size_t j = 1; j < length + 1; j++)
+				count[j] = count[j - 1] + (matrix[i][j - 1] - '0');
+			for(size_t start = 1; start < length + 1; start++)
+				for (size_t add = 0; start + add < length + 1; add++) {
+					if (count[start + add] - count[start - 1] != add + 1) 
+						memo[start][start + add] = 0;
+					else
+						memo[start][start + add]++;
+					if (memo[start][start + add] == add + 1)
+						Max = max(Max, (int)(add + 1));
+				}
+		}
+		return Max*Max;  
+	}
+};
+//时间复杂度为O(N^3) N层 每层遍历N^2次，很不理想
+//leetcode上耗时68ms beats4.40%的提交记录
+
+//优化方法就是数学方法
+//F(i,j)定义为以matrix[i][j]作为右下角的正方形的最大边长
+//F(i,j)=min(F(i,j-1),F(i-1,j),F(i-1,j-1))+1;
+//如：
+//   1 1 1 0    1 1 1 0     0 0 
+//   1 1 1 1    1 1 1 1     0 ?
+//   1 1 1 1    1 1 1 1
+//   0 1 1 ?    0 0 1 ?
+//将状态转移方程式代入 不难理解
+
+class Solution {
+public:
+	int maximalSquare(vector<vector<char>>& matrix) {
+		size_t m = matrix.size();
+		if (m == 0)
+			return 0;
+		size_t n = matrix[0].size();
+		int maxBorder = 0;
+		vector<vector<int>> memo(m, vector<int>(n, 0));
+		for (size_t i = 0; i < m; i++) {
+			memo[i][0] = matrix[i][0] - '0';
+			if (memo[i][0] == 1)
+				maxBorder = 1;
+		}
+		for (size_t i = 0; i < n; i++) {
+			memo[0][i] = matrix[0][i] - '0';
+			if (memo[0][i] == 1)
+				maxBorder = 1;
+		}
+			
+		//初始化完成
+		for (size_t i = 1; i < m; i++)
+			for (size_t j = 1; j < n; j++) {
+				if (matrix[i][j] == '0')continue;
+				memo[i][j] = min(min(memo[i - 1][j], memo[i][j - 1]), memo[i - 1][j - 1]) + 1;
+				maxBorder = max(maxBorder, memo[i][j]);
+			}
+		return maxBorder * maxBorder;
+	}
+
+};
