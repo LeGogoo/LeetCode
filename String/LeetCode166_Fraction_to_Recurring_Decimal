@@ -1,0 +1,52 @@
+//正整数相除不可能除出无理数,换句话说要么可以整除，要么是一个循环小数
+//解题过程实际就是一个模拟手除的过程
+//用一个map来记录出现过的被除数的index 当重复出现时，就是从map中的index到当前位置循环（自己手除一下10/7便很清晰这个过程了）
+//对非小数部分，直接用除法，但是注意int范围:[-2^31,2^31-1] 当把int的最小值 -2^31/-1 越界发生 也可能出现 -1/-2^31 使得后面表示不了，故转换为long处理
+class Solution {
+public:
+	string fractionToDecimal(int numerator, int denominator) {
+		long numeratorX = numerator;
+		long denominatorX = denominator;
+		bool isN = false;
+		if ((numeratorX > 0 && denominatorX < 0) || (numeratorX < 0 && denominatorX > 0))
+			isN = true;
+		numeratorX = abs(numeratorX);
+		denominatorX = abs(denominatorX);
+		string res = "";
+		res += (to_string(numeratorX / denominatorX));
+		if (numeratorX % denominatorX == 0) {
+			if (isN == true)
+				res.insert(0, "-");
+			return res;
+		}
+		res.push_back('.');
+		numeratorX = numeratorX % denominatorX;
+		size_t index = res.size();
+		unordered_map<int, size_t> map1;
+		while (numeratorX != 0) {
+			numeratorX *= 10;
+			auto it = map1.find(numeratorX);
+			if (it != map1.end()) {
+				res.insert((*it).second, "(");
+				res.push_back(')');
+				break;
+			}
+			map1.insert(pair<int, size_t>(numeratorX, index));
+			while (numeratorX / denominatorX == 0) {
+				numeratorX *= 10;
+				res.push_back('0');
+				index++;
+				map1.insert(pair<int, size_t>(numeratorX, index));
+			}
+			res.push_back(numeratorX / denominatorX + '0');
+			numeratorX = numeratorX % denominatorX;
+			index++;
+		}
+		if (isN == true)
+			res.insert(0, "-");
+		return res;
+	}
+};
+  //折磨王题，以后遇到可能越界的问题，直接转更大范围的类型
+  //时间复杂度为O(2^N) 其中N为除数的位数 如3/7因为除数为7 故每次除的结果最多为1-9就会循环 如3/77 每次的结果最多为1-99就会循环
+  //leetcode耗时4ms beats50.12&的提交记录
