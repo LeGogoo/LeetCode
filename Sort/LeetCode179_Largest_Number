@@ -1,0 +1,55 @@
+//这是一道魔鬼题，很容易考虑的不全面 想想：434，4344345，830，8308 该怎么排序
+class Solution {
+public:
+	string largestNumber(vector<int>& nums) {
+		sort(nums.begin(), nums.end(), [](const int& a, const int& b) {
+			if (a == b)
+				return false;
+			size_t index = 0;
+			string aString = to_string(a);
+			string bString = to_string(b);
+			while (index < aString.size() && index < bString.size()) {
+				if (aString[index] < bString[index])
+					return false;
+				else if (aString[index] > bString[index])
+					return true;
+				index++;
+			}
+			if (index == aString.size()) {
+				while (true) {
+					if (bString[index % bString.size()] > aString[index % aString.size()])
+						return false;
+					if (bString[index % bString.size()] < aString[index % aString.size()])
+						return true;
+					index++;
+					if (index == 2 * bString.size())
+						return false;
+				}
+			}
+			if (index == bString.size()) {
+				while (true) {
+					if (aString[index % aString.size()] < bString[index % bString.size()])
+						return false;
+					if (aString[index % aString.size()] > bString[index % bString.size()])
+						return true;
+					index++;
+					if (index == 2 * aString.size())
+						return false;
+				}
+			}
+			else
+				return false;
+				
+		});
+		string res = "";
+		bool isZero = true;
+		for (size_t i = 0; i < nums.size(); i++) {
+			res += to_string(nums[i]);
+		}
+		if (res[0] == '0')
+			res = "0";
+		return res; 
+	}
+};
+//时间复杂度为O(NlongN) 
+//leetcode耗时8ms beats80.47%的提交记录
