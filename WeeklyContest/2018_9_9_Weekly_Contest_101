@@ -1,0 +1,115 @@
+//非常开心 299 / 4934	LeGogoo 进步很大
+前2题是比较简单的构建类
+第一题就是简单的迭代，第二题用下简单的动态规划
+第一题：
+leetcode 900
+class RLEIterator {
+private:
+	vector<int> List;
+	size_t nowIndex;
+	int nowOver;
+public:
+	RLEIterator(vector<int> A) {
+		//{3,8,0,9,2,5}
+		List = A;
+		nowIndex = 0;
+		nowOver = A[0];
+	}
+
+	int next(int n) {
+		while (n != 0) {
+			if (nowOver == 0) {
+				nowIndex += 2;
+				if (nowIndex >= List.size())
+					return -1;
+				nowOver = List[nowIndex];
+			}
+			if (n <= nowOver) {
+				nowOver -= n;
+				n = 0;
+				return List[nowIndex + 1];
+			}
+			else {
+				n -= nowOver;
+				nowOver = 0;
+			}	
+		}
+		return -1;
+	}
+};
+
+第二题：
+leetcode901
+存第i天的价格和跨度
+每次看比前一天大还是小，小的化返回1，大的化继续看前一天的跨度前的那天
+class StockSpanner {
+private:
+	vector<int>memo;
+	vector<int>priceList;
+public:
+	StockSpanner() {
+		memo.clear();
+		priceList.clear();
+	}
+
+	int next(int price) {
+		if (priceList.empty() || price < priceList[priceList.size() - 1]) {
+			priceList.push_back(price);
+			memo.push_back(1);
+			return 1;
+		}
+		int index = priceList.size() - 1;
+		int count = 1;
+		while (index >= 0) {
+			if (priceList[index] <= price) {
+				count += memo[index];
+				index -= memo[index];
+			}
+			else
+				break;
+		}
+		priceList.push_back(price);
+		memo.push_back(count);
+		return count;
+	}
+};
+
+第三题：
+数学题
+class Solution {
+public:
+	int atMostNGivenDigitSet(vector<string>& D, int N) {
+		size_t DSize = D.size();
+		string NS = to_string(N);
+		int NLength = NS.size();
+		int res = 0;
+		for (int i = 1; i < NLength; i++) {
+			res += pow(DSize, i);
+		}
+		int index = 0;
+		bool isOut = false;
+		while (index < NLength) {
+			for (int i = 0; i < DSize; i++) {
+				if (D[i][0] > NS[index]) {
+					isOut = true;
+					break;
+				}
+				if (D[i][0] == NS[index]) {
+					if (index == NLength - 1)
+						res++;
+					isOut = false;
+					break;
+				}
+				if (D[i][0] < NS[index]) {
+					res += pow(DSize, NLength - index - 1);
+				}
+				if (i == DSize - 1)
+					isOut = true;
+			}
+			if (isOut)
+				break; 
+			index++;
+		}
+		return res;
+	}
+};
