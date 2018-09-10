@@ -1,0 +1,36 @@
+//先遍历链表求出长度，算出每一条的长度
+//然后处理链表（将相应指针制为NULL）
+class Solution {
+public:
+    vector<ListNode*> splitListToParts(ListNode* root, int k) {
+        ListNode* cur = root;
+        vector<ListNode*> res;
+        int length = 0;
+        while(cur != NULL){
+            cur = cur->next;
+            length++;
+        }
+        int onceLength = length / k;
+        int less = length % k;
+        cur = root;
+        while(k--){
+            int onceLengthS = onceLength;
+            if(less != 0){
+                onceLengthS ++;
+                less--;
+            }
+            res.push_back(cur);
+            if(cur == NULL)
+                continue;
+            for(int i = 1; i < onceLengthS; i++){
+                cur = cur->next;
+            }
+            ListNode* breakNode = cur;
+            cur = cur->next;
+            breakNode->next = NULL;
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N) 
+//leetcode耗时8ms，beats100%的提交记录
