@@ -1,0 +1,26 @@
+//set+贪心
+class Solution {
+private:
+    unordered_set<int> set1;
+public:
+    int numComponents(ListNode* head, vector<int>& G) {
+        set1.clear();
+        int res = 0;
+        for(size_t i = 0; i < G.size(); i++)
+            set1.insert(G[i]);
+        bool isNext = false;;
+        for(ListNode* i = head; i != NULL; i = i->next){
+            if(set1.find(i->val) != set1.end()){
+                if(isNext == false)
+                    res++;
+                isNext = true;
+            }
+            else{
+                isNext = false;
+            }
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N+W) 空间复杂度为O(W) N为head长度，W为G长度
+//leetcode耗时28ms beats91.18%的提交记录
