@@ -1,0 +1,60 @@
+//方法一：层序遍历，每次把一层中最右边的入res
+class Solution {
+public:
+	vector<int> rightSideView(TreeNode* root) {
+		vector<int> ret;
+		TreeNode* cur = root;
+		queue < TreeNode*> que;
+		if (!root)
+			return ret;
+		que.push(root);
+		ret.push_back(root->val); 
+		while (!que.empty()) {
+			int queSize=que.size();//这一层的长度
+			TreeNode* lastNode=NULL;
+			for (int i = 0; i < queSize; i++) {
+				TreeNode* front = que.front();
+				que.pop();
+				if (front->left) {
+					que.push(front->left);
+					lastNode = front->left;
+				}
+				if (front->right) {
+					que.push(front->right);
+					lastNode = front->right;
+				}
+			}
+			if(lastNode)
+				ret.push_back(lastNode->val); 
+		}
+		return ret;
+	}
+};
+//时间复杂度为O(N) N为二叉树节点个数 空间复杂度也为O(N)不理想
+
+//方法二：
+//根又左的顺序遍历树，遍历时记录当前深度和遍历到的最大深度，当当前深度大于最大深度时，把此节点入res，更新最大深度
+class Solution {
+private:
+    int maxDeep;
+    vector<int> res;
+    void inorder(TreeNode* root, int deep){
+        if(root == NULL)
+            return;
+        if(deep > maxDeep){
+            res.push_back(root->val);
+            maxDeep++;
+        }
+        inorder(root->right, deep + 1);
+        inorder(root->left, deep + 1);
+    }
+public:
+    vector<int> rightSideView(TreeNode* root) {
+        res.clear();
+        maxDeep = 0;
+        inorder(root, 1);
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(1)
+//leetcode耗时4ms beats97.78%的提交记录
