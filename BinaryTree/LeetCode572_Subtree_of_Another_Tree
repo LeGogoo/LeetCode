@@ -1,0 +1,28 @@
+//先序遍历root 看t每个节点是否和root匹配
+//匹配条件为从root 和 从t出发遍历 每次的结果都相同，知道结束
+class Solution {
+private:
+    bool preorderT(TreeNode* root, TreeNode* t){
+        if(root == NULL && t == NULL)
+            return true;
+        if(root == NULL || t == NULL)
+            return false;
+        if(root->val == t->val){
+            return preorderT(root->left, t->left) && preorderT(root->right, t->right);
+        }
+        return false;
+    }
+    bool preorderS(TreeNode* root, TreeNode* t){
+        if(root == NULL)
+            return false;
+        if(preorderT(root,t) == true)
+            return true;
+        return preorderS(root->left,t) || preorderS(root->right,t);
+    }
+public:
+    bool isSubtree(TreeNode* s, TreeNode* t) {
+        return preorderS(s,t);
+    }
+};
+//时间复杂度为O(N*M) N为root节点个数，M为t节点个数
+//leetcode耗时20ms beats97.98%的提交记录
