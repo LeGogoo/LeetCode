@@ -1,0 +1,32 @@
+//每找到一个和将其存进map1，然后遍历两次map1 第一次找到出现次数最大值，第二次将次数为最大值的入res
+class Solution {
+private:
+    unordered_map<int, int> map1;
+    int findSum(TreeNode* root){
+        if(root == NULL)
+            return 0;
+        int sum = 0;
+        sum += root->val;
+        sum += findSum(root->left);
+        sum += findSum(root->right);
+        map1[sum]++;
+        return sum;
+    }
+public:
+    vector<int> findFrequentTreeSum(TreeNode* root) {
+    //每找到一个和将其存进map1，然后遍历两次map1
+        findSum(root);
+        int maxSum = 0;
+        vector<int> res;
+        for(auto it = map1.begin(); it != map1.end(); it++){
+            maxSum = max(it->second,maxSum);
+        }
+        for(auto it = map1.begin(); it != map1.end(); it++){
+            if(it->second == maxSum)
+                res.push_back(it->first);
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(N) N为节点个数 
+//leetcode耗时12ms beats99.21%的提交记录
