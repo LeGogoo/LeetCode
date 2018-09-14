@@ -1,0 +1,40 @@
+//很有趣的思考过程，对于只有一个次数为1的数的时候 依次亦或便得到了结果
+//但是这道题是2个 那么拉通亦或一次还是会得到一个非0值
+//可以通过这个值将数组分成2部分 如最后得到的值为0x100
+//那么其中一个值一定倒数第三位上为1 另外一个值倒数第三位上一定为0
+//那么我们就这样把数组分为这样的2部分 然后对2部分分别拉通亦或自然得到了2个结果
+//不难证明这样分，相同的数一定会被分到一边
+class Solution {
+public:
+    vector<int> singleNumber(vector<int>& nums) {
+        int target = 0;
+        for(size_t i = 0; i < nums.size(); i++)
+            target ^= nums[i];
+        //现在从后向前找到第一个1
+        int dif = 0x1;//最低为为1
+        while((target & dif) != dif){
+            dif = dif<<1;
+        }
+        //找到了分割数组的dif
+        vector<int> vec1;
+        vector<int> vec2;
+        vector<int> res;
+        for(size_t i = 0; i < nums.size(); i++){
+            if((nums[i] & dif) == dif)
+                vec1.push_back(nums[i]);
+            else//(nums[i] & dif) != dif
+                vec2.push_back(nums[i]);
+        }
+        int res1,res2;
+        res1 = res2 = 0;
+        for(size_t i = 0; i < vec1.size(); i++)
+            res1 ^= vec1[i];
+        for(size_t i = 0; i < vec2.size(); i++)
+            res2 ^= vec2[i];
+        res.push_back(res1);
+        res.push_back(res2);
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(N)
+//leetcode耗时16ms beats46.92%的提交记录
