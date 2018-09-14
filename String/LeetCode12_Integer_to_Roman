@@ -1,0 +1,46 @@
+//简单的字符串处理，仔细点
+class Solution {
+private:
+    char data[4][2]={'I','V','X','L','C','D','M','M'};
+public:
+    string intToRoman(int num) {
+        assert(num > 1 && num < 3999);
+        string strNum = to_string(num);
+        string res = "";
+        int bitIndex = (int)strNum.size() - 1;
+        int length = (int)strNum.size() - 1;
+        while(bitIndex >= 0){
+            int getBit = strNum[length - bitIndex] - '0';
+            if(getBit < 5){
+                if(getBit == 4){
+                    res.push_back(data[bitIndex][0]);
+                    res.push_back(data[bitIndex][1]);
+                    bitIndex--;
+                    continue;
+                }
+                while(getBit != 0){
+                    res.push_back(data[bitIndex][0]);
+                    getBit--;
+                }
+            }
+            else{//getBit>=5
+                if(getBit == 9){
+                    res.push_back(data[bitIndex][0]);
+                    res.push_back(data[bitIndex+1][0]);
+                    bitIndex--;
+                    continue;
+                }
+                res.push_back(data[bitIndex][1]);
+                while(getBit > 5){
+                    res.push_back(data[bitIndex][0]);
+                    getBit--;
+                }
+            }
+            bitIndex--;
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N)
+//leetcode耗时72ms beats54.51%的提交记录 
+//看了一下，前面更快的解决方法为将4，9提前存入数组
