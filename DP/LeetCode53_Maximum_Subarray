@@ -1,0 +1,24 @@
+//F(i)为以第i个元素做为结尾的最大sum值
+//F(i) = max(F(i-1)+nums,nums)
+//或者写成 if(F(i-1)>0) F(i)=F(i-1)+nums[i] else F(i)=nums[i]
+//因为每次都只用到了F(i-1)所以只需要记录一个
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        size_t numsSize = nums.size();
+        if(numsSize == 0)
+            return 0;
+        int maxSum = nums[0];
+        int lastSum = nums[0];
+        for(size_t i = 1; i < numsSize; i++){
+            if(lastSum > 0)
+                lastSum += nums[i];
+            else
+                lastSum = nums[i];
+            maxSum = max(maxSum, lastSum);
+        }
+        return maxSum;
+    }
+};
+//时间复杂度为O(N)
+//leetcode耗时8ms beats97.44%的提交记录
