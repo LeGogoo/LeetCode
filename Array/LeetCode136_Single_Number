@@ -1,0 +1,13 @@
+//这道题就是漂亮，很漂亮的一道题
+//用亦或实现
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int res = 0;
+        for(size_t i = 0; i < nums.size(); i++)
+            res ^= nums[i];
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(1)
+//leetcode耗时16ms beats52.80%的提交记录
