@@ -1,0 +1,52 @@
+//1:leetcode905 水题，对撞指针，一个从前往后找奇数，一个从后往前招偶数
+class Solution {
+public:
+    vector<int> sortArrayByParity(vector<int>& A) {
+        vector<int> res(A);
+        int left = 0;
+        int right = (int)res.size()-1;
+        //从前往后找奇数，从后向前招偶数
+        while(left < right){
+            while(left < res.size() && (res[left] & 0x1) == 0)
+                left++;
+            while(right >= 0 && (res[right] & 0x1) == 1)
+                right--;
+            if(left >= right)
+                break;
+            swap(res[left],res[right]);
+            left++;
+            right--;
+        }
+        return res;
+    }
+};
+//时间复杂度O(N)
+
+//2:leetcode904 用一个map实现,从前向后存水果，记录当前起点，当map.size()<3时 比较并记录最大水果数
+//当map.size()>=3时，起点位置的水果-1 （当减完变成0后，删掉这个水果）
+//遍历一次即可得到答案，时间复杂度为O(N)
+
+class Solution {
+public:
+    int totalFruit(vector<int>& tree) {
+        unordered_map<int,int> map1;
+        int res = 0;
+        int start = 0;
+        for(size_t i = 0; i < tree.size(); i++){
+            map1[tree[i]]++;
+            if(map1.size() < 3){
+                int now = 0;
+                for(auto i = map1.begin(); i != map1.end(); i++)
+                    now += i->second;
+                res = max(res, now);
+            }
+            else{
+                map1[tree[start]]--;
+                if(map1[tree[start]] == 0)
+                    map1.erase(tree[start]);
+                start++;
+            }
+        }
+        return res;
+    }
+};
