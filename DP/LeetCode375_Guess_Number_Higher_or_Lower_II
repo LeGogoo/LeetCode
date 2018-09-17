@@ -1,0 +1,33 @@
+//用DP来选出最优策略
+//每次一定要选出一个值来进行比较，但是一定不是每次选中值（每次选中值可以保证判断的次数最少，但是不能保证花费最少）
+//F(i,j)定义为从选出[i,j]范围内的值需要的最小开销
+//F(i,j)=min(max(F(i,k-1),F(k+1,j))+k)其中 k属于(i,j)
+//F(x,x)=0
+//F(x,x+1)=x
+//记忆化搜索：
+class Solution {
+private:
+    vector<vector<int>> memo;
+    int minSpend(int start,int end){
+        if(start == end){
+            return 0;
+        }
+        if(start + 1 == end)
+            return start;
+        if(memo[start][end] != -1)
+            return memo[start][end];
+        int res = numeric_limits<int>::max();
+        for(int k = start + 1; k < end; k++){
+            res = min(res,k + max(minSpend(k+1, end), minSpend(start, k-1)));
+        }
+        memo[start][end] = res;
+        return res;
+    }
+public:
+    int getMoneyAmount(int n) {
+        memo = vector<vector<int>>(n+1,vector<int>(n+1,-1));
+        return minSpend(1, n);
+    }
+};
+//时间复杂度为O(N^2),空间复杂度为O(N^2)
+//leetcode耗时20ms beats41.92%的提交记录
