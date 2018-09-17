@@ -1,0 +1,36 @@
+//很巧妙的一道题，对于p的所有子串，看成以a-z结尾的长度为？的串，一共有26种结尾可能
+//如：abcdzab
+//[a]=1 [b]=2 [c]=3 [d]=4 [z]=1 [a]=2 [b]=3 记录下每个位置的最大值 全部加起来就是结果
+//如对上面:[a]=2 [b]=3 [c]=3 [d]=4 [z]=1 结果为 2+3+3+4+1=13
+//简单证明一下：对于"abcd" 结果为1+2+3+4 其中1可以看作长度为4的子串个数 2看作长度为3的子串个数 3看作长度为2的子串个数 4看作长度为1的子串个数
+//当增加一个"zab"时 z=1代表zab这个长度为3的串，a=2代表za,ab这2个长度为2的串，其中za是多出来的多出来1个 a也刚好加了1 b=3代表z,a,b 其中z是
+//多出来的，b也刚好加了1
+class Solution {
+public:
+    int findSubstringInWraproundString(string p) {
+        vector<int> aToZ(26,0);
+        int pSize = (int)p.size();
+        if(pSize == 0)
+            return 0;
+        int res = 0;
+        aToZ[p[0] - 'a'] = 1;
+        int length = 1;
+        for(size_t i = 1; i < p.size(); i++){
+            if((p[i-1] - 'a' + 1) % 26 == p[i] - 'a'){
+                length++;
+                aToZ[p[i] - 'a'] = max(aToZ[p[i] - 'a'], length);
+            }
+            else{
+                length = 1;
+                if(aToZ[p[i] - 'a'] == 0)
+                    aToZ[p[i] - 'a'] = 1;
+            }
+        }
+        for(size_t i = 0; i < aToZ.size(); i++)
+            res += aToZ[i];
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(1)
+//leetcode耗时12ms beats40.00%的提交记录
+//不能发现，上面的循环可以优化为1个，每次res += 当前值和存的值的差值 （初始值为0）
