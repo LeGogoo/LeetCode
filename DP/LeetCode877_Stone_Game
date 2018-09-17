@@ -1,0 +1,34 @@
+//F(i,j,isA)代表考虑i为起点，j为终点的,A选还是B选 的A最大领先价值
+//F(i,j,z,isA) = if(isA) max(piles[i]+F(i+1,j),piled[j]+F(i,j-1))
+//               if(!isA) min(F(i+1,j)-piles[i],F(i,j-1)-piled[j])
+//F(x,x,isA=true)=piles[x];
+//F(x,x,isA=false)=-piles[x];
+class Solution {
+private:
+    int minInt = numeric_limits<int>::min();
+    vector<vector<vector<int>>> memo;
+    int maxV(vector<int>& piles, int start, int end, int isA){
+        if(memo[start][end][isA] != minInt)
+            return memo[start][end][isA];
+        if(isA == 1){
+            if(start == end)
+                memo[start][end][isA] = piles[start];
+            else
+                memo[start][end][isA] = max(piles[start]+maxV(piles,start+1,end,0),piles[end]+maxV(piles,start,end-1,0));
+        }
+        else{
+            if(start == end)
+                memo[start][end][isA] = -piles[start];
+            else
+                memo[start][end][isA] = min(maxV(piles,start+1,end,1)-piles[start],maxV(piles,start,end-1,1)-piles[end]);
+        }
+        return memo[start][end][isA];
+    }
+public:
+    bool stoneGame(vector<int>& piles) {
+        int pS = piles.size();
+        memo = vector<vector<vector<int>>>(pS,vector<vector<int>>(pS,vector<int>(2,minInt)));
+        return maxV(piles, 0, pS - 1, 1) > 0;
+    }
+};
+//时间复杂度为O(N^2) 空间复杂度为O(N^2)
