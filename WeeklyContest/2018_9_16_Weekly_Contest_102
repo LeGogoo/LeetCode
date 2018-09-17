@@ -99,5 +99,3 @@ public:
     }
 };
 //时间复杂度为O(N) 空间复杂度为O(N)
-                map1[tree[start]]--;/
-                map1[tree[start]]--;
