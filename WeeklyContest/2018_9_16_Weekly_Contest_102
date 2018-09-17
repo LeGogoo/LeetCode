@@ -50,3 +50,54 @@ public:
         return res;
     }
 };
+
+//3:挺难的一道题：https://coding.imooc.com/learn/questiondetail/79745.html 给出了我与老师之间的问答过程
+/*计算对于每一个A[i]，有多少子集，其最小值是自己。
+针对每一个A[i]，求出比i大的最小索引j1，使得A[j1] <= A[i]；
+针对每一个A[i]，求出比i小的最大索引j2，使得A[j2] < A[i]；
+则在子集[a, b]中，a可以取 j2 + 1 到 i 的任何值；b可以取 i 到 j1 + 1 的任何值，使得[a,b]这个子集的最小值都为A[i]。
+这样的子集有 (i - j2) * (j1 - i) 个。
+我们可以遍历一遍整个A，对每个A[i]，直接计算出 (i - j2) * (j1 - i) * A[i]，把他们加起来就好了。
+*/
+//用一个辅助栈来快速求最大索引值和最小索引值
+class Solution {
+    
+private:
+    long long mod = 1e9 + 7;
+    
+public:
+    int sumSubarrayMins(vector<int>& A) {
+        
+        vector<int> stackHelper;
+        int ASize = (int)A.size();
+        vector<int> rightIndex(ASize,ASize);
+        
+        for(int i = 0; i < ASize; i++){
+            while(!stackHelper.empty() && A[stackHelper.back()] >= A[i]){
+                rightIndex[stackHelper.back()] = i;
+                stackHelper.pop_back();
+            }
+            stackHelper.push_back(i);
+        }
+        stackHelper.clear();
+        
+        vector<int> leftIndex(ASize,-1);
+        for(int i = ASize - 1; i >= 0; i--){
+            while(!stackHelper.empty() && A[stackHelper.back()] > A[i]){
+                leftIndex[stackHelper.back()] = i;
+                stackHelper.pop_back();
+            }
+            stackHelper.push_back(i);
+        }
+        
+        long long res = 0;
+        for(int i = 0; i < ASize; i++){
+            res += (long long)(rightIndex[i] - i) * (long long)(i - leftIndex[i]) % mod * A[i] % mod;
+            res %= mod;
+        }
+        return (int)res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(N)
+                map1[tree[start]]--;/
+                map1[tree[start]]--;
