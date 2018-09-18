@@ -1,0 +1,34 @@
+//F(i,j) 为将i号元素放进第k堆的情况
+//F(i,j) 有三个属性：除当前堆外的所有堆的和，当前堆的和，当前堆中元素的个数,当前总价值
+//1:放进和上一个元素一样的堆中
+//F(i,j).otherSum = F(i-1,j).otherSum
+//F(i,j).nowSum = F(i-1,j).nowSum + A[i]
+//F(i,j).nowSize = F(i-1,j).nowSize + 1
+//F(i,j).allSum = F(i-1,j-1).otherSum + F(i-1,j-1).nowSum / F(i-1,j-1).nowSize
+//2:放进上一个元素放进的后面的那个堆中
+//F(i,j).otherSum = F(i-1,j-1).allSum
+//F(i,j).nowSum = A[i]
+//F(i,j).nowSize = 1
+//F(i,j).allSum = F(i,j).otherSum + A[i]
+
+//比较2种方法谁的allSum大就选谁
+//注意当出现无堆可放的情况返回-1
+class Solution {
+private:
+    struct node{
+        double otherSum;
+        double nowSum;
+        double nowSize;
+        double allSum;
+    }
+    vector<vector<double>> memo;
+    double findMax(int index, int K){
+        
+    }
+public:
+    double largestSumOfAverages(vector<int>& A, int K) {
+        size_t ASize = A.size();
+        memo = vector<vector<double>>(ASize,vector<double>(K, 0));
+        
+    }
+};
