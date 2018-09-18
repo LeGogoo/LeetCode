@@ -64,3 +64,47 @@ public:
     }
 };
 //很遗憾，还是超时了，说明问题不在找x的地方？感觉很奇怪
+//第二次优化
+//用一个map<pair<j,y>,vector<int>>去存所有j为j，下一个数为y的 x的坐标,（存长度最长的，可能有多个）
+class Solution {
+public:
+    int lenLongestFibSubseq(vector<int>& A) {
+        size_t ASize = A.size();
+        vector<vector<int>> memo(ASize, vector<int>(ASize, 0));
+        map<pair<size_t, int>,vector<size_t>> list;
+        int res = 0;
+        for(size_t i = 0; i < ASize; i++){
+            for(size_t j = i + 1; j < ASize; j++){
+                memo[i][j] = 2;
+                list[make_pair(j, A[i] + A[j])].push_back(i);
+            }
+        }
+        for(size_t i = 0; i < ASize; i++){
+            for(size_t j = i + 1; j < ASize; j++){
+                map<pair<size_t, int>,vector<size_t>>::iterator it;
+                if((it = list.find(make_pair(i, A[j]))) != list.end()){
+                    for(size_t y = 0; y < it->second.size(); y++){
+                        size_t x = it->second[y];
+                        vector<size_t> *vec = &list[make_pair(j, A[i] + A[x])];
+                        memo[i][j] = max(memo[i][j], memo[x][i] + 1);
+                        if(!(*vec).empty()){
+                            if(memo[x][i] > memo[(*vec).back()][i]){
+                                (*vec).clear();
+                                (*vec).push_back(i);
+                            }
+                            else if(memo[x][i] == memo[(*vec).back()][i])
+                                (*vec).push_back(i);
+                        }
+                        else
+                            (*vec).push_back(i);
+                    }
+                    res = max(res, memo[i][j]);
+                }
+            }
+        }
+        if(res < 3)
+            return 0;
+        return res;
+    }
+};
+//还是超时了，去看看别人的思路。。
