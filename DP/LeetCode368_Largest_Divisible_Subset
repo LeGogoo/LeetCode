@@ -1,0 +1,45 @@
+//分析规律：1，2，4，12，60...只要能保证新进来的数是大于之前的最大值，且是最大值的整数倍数就行了
+//如上面可以分解为：1,1*2,1*2*2,1*2*2*3,1*2*2*3*5 从后相前除总是能整除
+//先排序（排序只会影响子集的位置关系不会影响子集中含的值）
+//F(i) 定义为以下标i做为结尾的最长的串,和上一个值的下标为多少
+//F(i) = max(F(z) + 1) z<i && nums[i]%nums[z]==0
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        size_t numsSize = nums.size();
+        sort(nums.begin(), nums.end());
+        vector<int> res;
+        if(numsSize == 1){
+            res.push_back(nums[0]);
+            return res;
+        }
+        
+        vector<pair<int,int>>memo(numsSize, make_pair(1, -1));
+        int maxLength = 0;
+        int maxIndex = -1;
+        for(size_t i = 1; i < numsSize; i++){
+            for(size_t j = 0; j < i; j++){
+                if(nums[i] % nums[j] == 0 && memo[j].first + 1 > memo[i].first){
+                    memo[i].first = memo[j].first + 1;
+                    memo[i].second = (int)j;
+                }
+            }
+            if(memo[i].first > maxLength){
+                maxLength = memo[i].first;
+                maxIndex = (int)i;
+            }
+        }
+        stack<int> stack1;
+        while(maxIndex != -1){
+            stack1.push(nums[maxIndex]);
+            maxIndex = memo[maxIndex].second;
+        }
+        while(!stack1.empty()){
+            res.push_back(stack1.top());
+            stack1.pop();
+        }
+        return res;
+    }
+    //时间复杂度为O(N^2) 空间复杂度为O(N)
+    //leetcode上耗时28ms beats71.15%的提交记录
+};
