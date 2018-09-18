@@ -1,0 +1,66 @@
+//DP
+//因为要知道下一个数是多少，所以得记录最后2个数
+//F(i,j)代表以下标i，j为结尾的2个数的最大长度
+//如果之前存在F(x,i)使得 A[j]=A[x]+A[i]成立
+//F(i,j) = max(F(x,i))+1;
+class Solution {
+public:
+    int lenLongestFibSubseq(vector<int>& A) {
+        size_t ASize = A.size();
+        vector<vector<int>> memo(ASize, vector<int>(ASize, 0));
+        int res = 0;
+        for(size_t i = 0; i < ASize; i++){
+            for(size_t j = i + 1; j < ASize; j++){
+                memo[i][j] = 2;
+            }
+        }
+        for(size_t i = 0; i < ASize; i++){
+            for(size_t j = i + 1; j < ASize; j++){
+                size_t lastJ = i;
+                for(size_t x = 0; x < lastJ; x++){
+                    if(A[x] + A[lastJ] == A[j])
+                        memo[i][j] = max(memo[i][j], memo[x][lastJ] + 1);
+                }
+                res = max(res, memo[i][j]);
+            }
+        }
+        if(res < 3)
+            return 0;
+        return res;
+    }
+};
+//上面的方法超时了，尝试去优化一下找x的那部分
+//用一个map<pair<j,y>,vector<int>>去存所有j为j，下一个数为y的 x的坐标
+class Solution {
+public:
+    int lenLongestFibSubseq(vector<int>& A) {
+        size_t ASize = A.size();
+        vector<vector<int>> memo(ASize, vector<int>(ASize, 0));
+        map<pair<size_t, int>,vector<size_t>> list;
+        int res = 0;
+        for(size_t i = 0; i < ASize; i++){
+            for(size_t j = i + 1; j < ASize; j++){
+                memo[i][j] = 2;
+                list[make_pair(j, A[i] + A[j])].push_back(i);
+            }
+        }
+        for(size_t i = 0; i < ASize; i++){
+            for(size_t j = i + 1; j < ASize; j++){
+                map<pair<size_t, int>,vector<size_t>>::iterator it;
+                if((it = list.find(make_pair(i, A[j]))) != list.end()){
+                    for(size_t y = 0; y < it->second.size(); y++){
+                        size_t x = it->second[y];
+                        memo[i][j] = max(memo[i][j], memo[x][i] + 1);
+                        list[make_pair(j, A[i] + A[x])].push_back(i);
+                    }
+                    res = max(res, memo[i][j]);
+                }
+                
+            }
+        }
+        if(res < 3)
+            return 0;
+        return res;
+    }
+};
+//很遗憾，还是超时了，说明问题不在找x的地方？感觉很奇怪
