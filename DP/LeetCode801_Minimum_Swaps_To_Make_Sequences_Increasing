@@ -1,0 +1,52 @@
+//DP
+//F(i).first 代表i号位置交换后能得到有序列的最小交换次数
+//F(i).second 代表i号位置不交换能得到有序列的最小交换次数
+//if(A[i]>A[i-1] && B[i]>B[i-1])
+//代表当前位置应该不换
+//F(i).second = F(i-1).second
+//不难想象，如果上一个位置换了当前位置才能换 F(i).first = F(i-1).first+1
+//if(A[i]>B[i-1] && B[i]>A[i-1])
+//代表当前位置应该换
+//F(i).first = F(i-1).secend+1
+//同理F(i).second = F(i-1).first
+
+//当2个条件同时成立的时候，当前位置可换，可不换，取最优情况
+//F(i).first = min(F(i-1).first,F(i-1).secend)+1
+//F(i).secend = min(F(i-1).first,F(i-1.secend));
+//由于每次都只看上一次 故只需记录上一个F(i)
+
+class Solution {
+public:
+    int minSwap(vector<int>& A, vector<int>& B) {
+        int lastChange = 1;
+        int lastNotChange = 0;//第一个位置换不换一定都可以
+        for(size_t i = 1; i < A.size(); i++){
+            bool canChange = false;
+            bool canNotChange = false;
+            int nowChange, nowNotChange;
+            if(A[i] > A[i - 1] && B[i] > B[i - 1])
+                canNotChange = true;
+            if(A[i] > B[i - 1] && B[i] > A[i - 1])
+                canChange = true;
+            if(canChange && canNotChange){
+                nowNotChange = min(lastChange, lastNotChange);
+                nowChange = nowNotChange+1;
+            }
+            else if(canChange){
+                nowChange = lastNotChange + 1;
+                nowNotChange = lastChange;
+            }
+            else if(canNotChange){
+                nowNotChange = lastNotChange;
+                nowChange = lastChange + 1;
+            }
+            else
+                assert("Error Input");
+            lastNotChange = nowNotChange;
+            lastChange = nowChange;
+        }
+        return min(lastNotChange, lastChange);
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(1)
+//leetcode上耗时20ms beats20.00%的提交记录
