@@ -1,0 +1,83 @@
+//用dfs不断去找上一个点的下一个点 标记状态
+class Solution {
+private:
+    vector<vector<int>> connected;//记录联通关系
+    vector<int> whitch;//记录i在哪个堆，-1表示未进堆，0，1分别表示2个堆
+    bool dfs(int index){
+        bool res;
+        for(size_t i = 0; i < connected[index].size(); i++){
+            int nextIndex = connected[index][i];
+            if(whitch[index] == whitch[nextIndex])
+                return false;
+            if(whitch[index] != -1 && whitch[nextIndex] != -1)
+                return true;
+            whitch[nextIndex] = whitch[index] == 0 ? 1 : 0;
+            res = dfs(nextIndex);
+            if(res == false)
+                return false;
+        }
+        return true;
+    }
+public:
+    bool possibleBipartition(int N, vector<vector<int>>& dislikes) {
+        size_t dislikesSize = dislikes.size();
+        if(dislikesSize == 1 || dislikesSize == 0)
+            return true;
+        connected = vector<vector<int>>(N + 1,vector<int>());
+        for(size_t i = 0; i < dislikesSize; i++){
+            connected[dislikes[i][0]].push_back(dislikes[i][1]);
+            connected[dislikes[i][1]].push_back(dislikes[i][0]);
+        }
+        whitch = vector<int>(N + 1, -1);
+        whitch[dislikes[0][0]] = 0;//把第一个点放进一个堆
+        return dfs(dislikes[0][1]);
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(N) N互斥关系的数量
+//leetcode上耗时100ms beats93.64%的提交记录
+
+//难以置信，上面的代码没有从每一个可能的起点去遍历图，竟然AC了，说明leetcode的测试样例不全
+//上面的代码理应是无法通过 5 [[1,2],[3,4],[3,5],[4,5]]的
+//已经给leetcode发邮件了，看看它怎么说
+//改进后的代码：
+class Solution {
+private:
+    vector<vector<int>> connected;//记录联通关系
+    vector<int> whitch;//记录i在哪个堆，-1表示未进堆，0，1分别表示2个堆
+    bool dfs(int index){
+        bool res;
+        for(size_t i = 0; i < connected[index].size(); i++){
+            int nextIndex = connected[index][i];
+            if(whitch[index] == whitch[nextIndex])
+                return false;
+            if(whitch[index] != -1 && whitch[nextIndex] != -1)
+                continue;
+            whitch[nextIndex] = whitch[index] == 0 ? 1 : 0;
+            res = dfs(nextIndex);
+            if(res == false)
+                return false;
+        }
+        return true;
+    }
+public:
+    bool possibleBipartition(int N, vector<vector<int>>& dislikes) {
+        size_t dislikesSize = dislikes.size();
+        if(dislikesSize == 1 || dislikesSize == 0)
+            return true;
+        connected = vector<vector<int>>(N + 1,vector<int>());
+        for(size_t i = 0; i < dislikesSize; i++){
+            connected[dislikes[i][0]].push_back(dislikes[i][1]);
+            connected[dislikes[i][1]].push_back(dislikes[i][0]);
+        }
+        whitch = vector<int>(N + 1, -1);
+        bool res = true;
+        for(size_t i = 1; i <= N; i++){
+            if(whitch[i] == -1)
+                whitch[i] = 0;
+            res = res && dfs((int)i);
+            if(res == false)
+                return false;
+        }
+        return true;
+    }
+};
