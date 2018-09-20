@@ -1,0 +1,48 @@
+//F(i,j)来表示覆盖地图i(表示上面一行的长度)，j(表示下面一行的长度)的方案数
+//覆盖方式有 i>0 && j>0时 可以竖2 F(i,j)+=F(i-1,j-1)
+//         i>1 && j>1 && i=j时 可以  []  or [][]
+//                                [][]       []
+//         i >= 2时 上面可以横2  F(i,j)+=F(i-2,j)
+//         j >= 2时 下面可以横2  F(i,j)+=F(i,j-2)
+//         这里值的一提的是 因为上面横2 和下面横2可能会计算重复 故需要计算F(i-2,j-2) 加上这个值（包括上2下2同时存在的所有情况），
+//         然后计算F(i-2,j)和F(i,j-2)时都需要剪去一个F(i-2,j-2) 这个地方有点绕，可以举个例子去验证一下
+//         i>1 && j>1 && i=j+1 时可以    [][]
+//                                      []
+
+//         i>1 && j>1 && i+1=j 时可以    []
+//                                      [][]
+
+class Solution {
+#define mod 1000000007
+public:
+    int numTilings(int N) {
+        vector<vector<int>>memo(N + 1, vector<int>(N + 1, 0));
+        memo[0][0] = 1;
+        for(int i = 0; i <= N; i++)
+            for(int j = 0; j <= N; j++){
+                if(i>1 && j>1 ){
+                    memo[i][j] = memo[i-2][j-2];
+                    memo[i][j] += memo[i-2][j] - memo[i-2][j-2];
+                    memo[i][j] += memo[i][j-2] - memo[i-2][j-2];
+                }
+                else{
+                    if(i>1) memo[i][j] += memo[i-2][j];
+                    if(j>1) memo[i][j] += memo[i][j-2];
+                }
+                
+                if(i == j){
+                    if(i>0&&j>0)memo[i][j] += memo[i-1][j-1];
+                    if(i>0&&j>1)memo[i][j] += memo[i-1][j-2];
+                    if(i>1&&j>0)memo[i][j] += memo[i-2][j-1];
+                }
+                
+                if(i == j + 1 && i > 1 && j > 0)
+                    memo[i][j] += memo[i-2][j-1];
+                if(j == i + 1 && i > 0 && j > 1)
+                    memo[i][j] += memo[i-1][j-2];
+                memo[i][j] %= mod;
+            }
+        return memo[N][N] % mod;
+    }
+};
+//时间复杂度为O(N^2) 空间复杂度为O(N^2)
