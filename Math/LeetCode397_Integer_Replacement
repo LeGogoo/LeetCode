@@ -1,0 +1,51 @@
+//应该可以用贪心来解，每次在i i-1 i+1 三个数中选择可以整除2次数最多的数
+//因为i不需要变化，所以i的次数应该+1
+//快速判断可以整除2的次数的方法是看这个数的二进制从最后一位向前推有多少个连续的0
+//如 4:0x100 可以整除2次  16:0x10000 可以整除4次  120:1111000可以整除3次
+//注意2个地方：n=3时应该返回2 如果去计算，n+1（4）可以整除2次 而n-1（2）只能整除1次 但是2整除一次就得到结果1了
+//因为n为int 所以当n=intMax时 +1会出错，我们用long long 来处理n
+class Solution {
+private:
+    int checkZ(int n){//用来计算一个数可以整除2多少次
+        assert(n != 0);
+        int check = 1;
+        int times = 0;
+        while((n & check) != check){
+            times++;
+            check = check << 1;
+        }
+        return times;
+    }
+public:
+    int integerReplacement(int n) {
+        int res = 0;
+        long long longN = n;
+        while(longN != 1){
+            if(longN == 3){
+                res += 2;
+                break;
+            }
+            int times1,times2,times3;
+            times1 = checkZ(longN - 1);
+            times2 = checkZ(longN) + 1;
+            times3 = checkZ(longN + 1);
+            int maxTimes = max(times1, times2);
+            maxTimes = max(maxTimes, times3);
+            if(times1 == maxTimes){
+                longN = (longN - 1) >> times1;
+                res += times1 + 1;
+            }
+            else if(times2 == maxTimes){
+                longN = longN >> (times2 - 1);
+                res += times2 - 1;
+            }
+            else{//times2 == maxTimes
+                longN = (longN + 1) >> times3;
+                res += times3 + 1;
+            }
+        }
+        return res;
+    }
+};
+//时间复杂度为O(NlogN)
+//leetcode上耗时8ms beats20.20%的提交记录
