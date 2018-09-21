@@ -1,0 +1,24 @@
+//sum[i,j]为[i,j]nums[i]*nums[i+1]...*nums[j]
+//对于res[i] = sum[0,i-1]*sum[i+1,end]
+//其中sum[0,i-1]每次都会乘上一个nums[i] 而sum[i+1,end]的累乘顺序与遍历顺序相反，不能采用前面的方式
+//故我们预处理sum[i+1,end] 把它先存在res中
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        vector<int> res(nums.size(), 1);
+        int numsSize = (int)nums.size();
+        int sum = 1;
+        for(int i = numsSize - 1; i >= 0; i--){
+            res[i] = sum;
+            sum *= nums[i];
+        }
+        sum = 1;
+        for(int i = 0; i < numsSize; i++){
+            res[i] *= sum;
+            sum *= nums[i];
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为1
+//leetcode上耗时40ms beats98.74%的提交记录
