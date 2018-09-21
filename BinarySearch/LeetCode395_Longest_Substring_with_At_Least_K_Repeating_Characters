@@ -1,0 +1,61 @@
+//这道题太酷了
+//不是二分，是n分！
+//很巧妙的一道题 对于s[i,j] 子串的最大值
+//先遍历一次s[i,j] 找到其中每个元素的出现次数，找到所有次数小于k的所有元素的所有位置
+//s[i,j]子串中一定不能包含这些位置，因为s[i,j]里都不够，子串也不可能够
+//再去遍历每个位置
+//如：[a,b,c,c,b,c,c,a,a,c,c,a,d]，3 则不能包含的元素为b,d 不能包含的index=1,4，12
+//再去遍历[0,0] [2,3] [5,12]
+//当某个子串中没有出现次数小于k的，证明这个串是一个解
+//实时记录最长解 当[i,j]中 j-i+1 <= 最长解时不用去计算
+class Solution {
+private:
+    int times;
+    int maxLength = 0;
+    string list;
+    int findMax(int start, int end){
+        int length = end - start + 1;
+        if(length <= 0 || length < times || length < maxLength)
+            return 0;
+        map<char,int> everyTimes;
+        for(int i = start; i <= end; i++)
+            everyTimes[list[i]]++;
+        //统计完成每个元素出现的次数
+        unordered_set<char> badVal;
+        for(auto it = everyTimes.begin(); it != everyTimes.end(); it++)
+            if(it->second < times)
+                badVal.insert(it->first);
+        //找到所有不能被包含的元素，接下来去找他们的所有位置
+        vector<int> badIndex;
+        for(int i = start; i <= end; i++){
+            if(badVal.find(list[i]) != badVal.end()){
+                badIndex.push_back(i);
+            }
+        }
+        if(badIndex.empty()){//此范围符合标准
+            maxLength = max(maxLength, length);
+            return maxLength;
+        }
+        //已经找到所有不符合条件元素的坐标 根据这n个坐标，将list分为了n+1个部分
+        //如 ： 1，5，7，12 sSize = 16 那么就分为[0,0] [2,4] [6,6] [8,11] [13,15] 这5个部分
+        for(size_t i = 0; i <= badIndex.size(); i++){//将i号元素作为后界
+            if(i == 0)
+                findMax(start, badIndex[0] - 1);
+            else if(i == badIndex.size())
+                findMax(badIndex[i - 1] + 1, end);
+            else
+                findMax(badIndex[i - 1] + 1, badIndex[i] - 1);
+        }
+        return maxLength;
+    }
+public:
+    int longestSubstring(string s, int k) {
+        int sSize = (int)s.size();
+        list = s;
+        times = k;
+        return findMax(0, sSize - 1);
+    }
+};
+//时间复杂度不太好证明，反正应该是优于O(NlongN)的 空间复杂度为O(N)
+//leetcode上耗时4ms beats86.05%的提交记录
+
