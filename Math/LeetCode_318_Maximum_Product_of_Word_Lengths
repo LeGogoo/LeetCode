@@ -1,0 +1,53 @@
+//暴力解，遍历所有可能，次数为n*(n-1) 时间复杂度为O(N^2) 对于每个可能，先看是否大于当前的最大值，然后是符合要求（是否有重复值）
+//符合要求则更新最大值 那么可以优化的地方就在于判断是否符合要求，可以用一个set来判断，可以预先把所有set建立起来，因为只可能包含'a'-'z'
+//26种可能，故判断最多需要26次，这是一个常数级的时间开销 总的时间复杂度为O(L+N^2) N代表元素个数，L代表所有元素的总长度
+class Solution {
+public:
+    int maxProduct(vector<string>& words) {
+        int wordsSize = (int)words.size();
+        vector<unordered_set<char>> list(wordsSize,unordered_set<char>());
+        for(int i = 0; i < wordsSize; i++)
+            for(int j = 0; j < (int)words[i].size(); j++)
+                list[i].insert(words[i][j]);
+        int res = 0;
+        for(int i = 0; i < wordsSize - 1; i++)
+            for(int j = i + 1; j < wordsSize; j++){
+                int newLength = (int)(words[i].size() * words[j].size());
+                if(newLength > res){
+                    bool ok = true;
+                    for(auto it = list[j].begin(); it != list[j].end(); it++)
+                        if(list[i].find(*it) != list[i].end()){
+                            ok = false;
+                            break;
+                        }
+                    if(ok)
+                        res = newLength;
+                }
+            }
+        return res;
+    }
+};
+//时间复杂度为O(L+N^2) N代表元素个数，L代表所有元素的总长度  空间复杂度为O(N) 值的一提的是此时的常数项值比较大，最大为26
+//可以用位操作来优化比较是否符合标准的过程，a-z 26个值可以用26个bool来表示是从a-z每一个数字是否存在，看到这里不难想象把这26个bool放进一个int
+
+//优化思路：将一个words存进一个int 因为int的范围是2^32 换句话说可以表示32个bool值，这里只需要26个(a-z)，比较2个数是否含有重复的元素
+//只需要将2个int 进行&操作，如果结果为0，代表无重复元素，不为0代表有重复元素
+class Solution {
+public:
+    int maxProduct(vector<string>& words) {
+        int wordsSize = (int)words.size();
+        vector<int>list(wordsSize, 0);
+        for(int i = 0; i < wordsSize; i++)
+            for(int j = 0; j < (int)words[i].size(); j++)
+                list[i] = (list[i] | (0x1 << (words[i][j] - 'a')));
+        int res = 0;
+        for(int i = 0; i < wordsSize - 1; i++)
+            for(int j = i + 1; j < wordsSize; j++){
+                int newLength = (int)words[i].size() * (int)words[j].size();
+                if(newLength > res && (list[i] & list[j]) == 0)
+                    res = newLength;
+            }
+        return res;
+    }
+};
+//时间复杂度为O(N^2),但是常数项的比较低，只是一个按位与的过程
