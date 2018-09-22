@@ -1,0 +1,30 @@
+//题述不是很清楚，实验了一下2 [1,00] 返回1024 所以题目应该是默认b[i]是一位的
+//需要知道    pow(a,b) = pow(a,b)*pow(a,b)  (b%2==0)
+//           pow(a,b) = pow(a,b)*pow(a,b)*a  (b%2==1)
+//注意时刻要%mod
+
+class Solution {
+#define mod 1337
+private:
+	int pow(int a, int b) {
+		if (b == 0)
+			return 1;
+		if (b == 1)
+			return a % mod;
+		if (b == 2)
+			return a * a % mod;
+		if (b % 2 == 0)
+			return pow(pow(a % mod, b / 2) % mod, 2) % mod;
+		else
+			return pow(pow(a % mod, b / 2) % mod, 2) * a % mod;
+	}
+public:
+	int superPow(int a, vector<int>& b) {
+		int res = 1;
+		for (int i = 0; i < (int)b.size(); i++)
+			res = pow(res, 10) * pow(a % mod, b[i]) % mod;
+		return res;
+	}
+};
+//时间复杂度为O(N) 实际次数为N*X X最大为log1376
+//leetcode上耗时8ms beats96.15%的提交记录
