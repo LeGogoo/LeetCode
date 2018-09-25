@@ -1,0 +1,23 @@
+//简单的字符串处理
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int hayStackSize = (int)haystack.size();
+        int needleSize = (int)needle.size();
+        if(needleSize == 0)
+            return 0;
+        if(hayStackSize == 0)
+            return -1;
+        for(int i = 0; i + needleSize <= hayStackSize; i++){
+            int j;
+            for(j = 0; j < needleSize; j++)
+                if(haystack[i + j] != needle[j])
+                    break;
+            if(j == needleSize)
+                return i;
+        }
+        return -1;
+    }
+};
+//时间复杂度为O(M*N)
+//leetcode耗时8ms beats50.94%的提交记录
