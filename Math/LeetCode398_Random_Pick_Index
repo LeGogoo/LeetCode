@@ -1,0 +1,26 @@
+//分析见382题对蓄水池抽样的分析
+class Solution {
+private:
+    vector<int> nums;
+public:
+    Solution(vector<int> nums) {
+        this->nums = nums;
+        srand(time(NULL));
+    }
+    
+    int pick(int target) {
+        int res = -1;
+        int times = 1;
+        int numsSize = (int)nums.size();
+        for(int i = 0; i < numsSize; i++){
+            if(nums[i] != target)
+                continue;
+            if(rand() % times == 0)
+                res = i;
+            times++;
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(1)
+//leetcode耗时80ms beats79.07%的提交记录
