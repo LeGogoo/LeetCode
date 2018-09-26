@@ -1,0 +1,26 @@
+//最直观的思路是遍历每个点，当找到一个战舰时计数加一，再用dfs删掉这艘战舰
+//但是不符合题目中的条件：不修改board
+//看看board的规律：船都是长方形的
+//采用从左到右，从上到下的方式遍历board，由于没有相邻的船，故当这个点的左边或者上面的点也是船的时候，跳过这个点
+//不难想象这样的遍历方式可以保证每个船只遍历一次
+class Solution {
+public:
+    int countBattleships(vector<vector<char>>& board) {
+        int boardN = (int)board.size();
+        int boardM = (int)board[0].size();
+        int res = 0;
+        for(int i = 0; i < boardN; i++)
+            for(int j = 0; j < boardM; j++){
+                if(board[i][j] != 'X')
+                    continue;
+                if(i > 0 && board[i-1][j] == 'X')
+                    continue;
+                if(j > 0 && board[i][j-1] == 'X')
+                    continue;
+                res++;
+            }
+        return res;
+    }
+};
+//时间复杂度为O(M*N) 空间复杂度为O(1)
+//leetcode上耗时8ms beats64.65%的提交记录
