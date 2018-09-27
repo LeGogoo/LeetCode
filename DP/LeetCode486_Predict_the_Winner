@@ -1,0 +1,23 @@
+//F(i,j)定义为i-j范围内的最大领先数
+//F(i,j) = max(nums[i]-F(i+1,j),nums[j]-F(i,j-1))
+//解释一下上面的状态转移方程，可以理解为当前选一个值，当前领先的值为选出的值剪去剩下范围里对手的最大领先值
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int numsSize = (int)nums.size();
+        map<pair<int, int>,int> memo;//因为领先的值可以是一切整数，不好判断是否计算过了，故用一个map实现
+        //pair中的是i-j,后面一个int代表的是最大领先个数
+        for(int i = 0; i < numsSize; i++)
+            memo[make_pair(i, i)] = nums[i];
+        for(int add = 1; add < numsSize; add++)
+            for(int start = 0; start + add < numsSize; start++){
+                int end = start + add;
+                int chooseLeft = nums[start] - memo[make_pair(start + 1, end)];
+                int chooseRigt = nums[end] - memo[make_pair(start, end - 1)];
+                memo[make_pair(start, end)] = max(chooseLeft, chooseRigt);
+            }
+        return memo[make_pair(0, 0 + numsSize - 1)] > 0;
+    }
+};
+//时间复杂度相当于一个等差数列求和 为O(N^2) 空间复杂度为O(N^2)
+//leetcode耗时4ms beats71.09%的提交记录
