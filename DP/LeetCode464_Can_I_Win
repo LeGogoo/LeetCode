@@ -1,0 +1,49 @@
+//DP
+//先想想获胜条件：在当前的所有选择中，要是有一种选择可以使对手必输，那么我方必胜
+//             当选择一个数后当前sum超过了target，也是胜
+//输的条件：所有选择中，所有选择对方都会赢
+//此题的需要存一下当前已经用过的值，因为不会超过20，所以可以用一个int来存，int可以存32个状态值嘛
+//注意每次返回前都要维护一下memo
+//bzw：此题有个一特殊情况 所有值加起来打不到target，此时无人获胜
+//总结一下：状态定义为：F(i,j)//i代表重复情况（的那个int），j代表当前累加值 F(i,j)表示的是获胜或者失败的一个bool值
+//这道题的状态转移方程式就在解题中，要是列出来相当于大段复制粘贴了，故就不列了
+class Solution {
+private:
+    int target;
+    int maxChoos;
+    map<pair<int,int>,bool> memo;
+    bool _canIWin(int sign, int sum){
+        bool res = true;
+        for(int i = 1; i <= maxChoos; i++){
+            auto it = memo.find(make_pair(sign, sum));
+            if(it != memo.end())
+                return it->second;
+            int mos = 1 << i;
+            if((sign & mos) == mos)
+                continue;
+            if(sum + i >= target){
+                memo[make_pair(sign, sum)] = true;
+                return true;
+            }
+            res = res && _canIWin(sign | mos, sum + i);
+            if(res == false){
+                memo[make_pair(sign, sum)] = true;
+                return true;
+            }
+            
+        }
+        memo[make_pair(sign, sum)] = false;
+        return false;
+    }
+public:
+    bool canIWin(int maxChoosableInteger, int desiredTotal) {
+        target = desiredTotal;
+        maxChoos = maxChoosableInteger;
+        if((maxChoos + 1) * maxChoos < desiredTotal)
+            return false;//这种情况没有人能获胜
+        return _canIWin(0, 0);
+    }
+};
+//用的记忆化搜索的方式，不好算时间复杂度 空间开销为常数（题目规定了范围）
+//leetcode上用时308ms beats7.22%的提交记录
+//有时间用动态规划优化一下，时间开销应该会大幅降低
