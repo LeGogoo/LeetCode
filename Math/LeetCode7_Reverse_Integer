@@ -1,0 +1,23 @@
+//此题重点在于判断是否越界
+class Solution {
+private:
+    int maxInt = numeric_limits<int>::max();
+    int minInt = numeric_limits<int>::min();
+public:
+    int reverse(int x) {
+        int res = 0;
+        while(x != 0){
+            int bit = x % 10;
+            if(res > maxInt / 10 || (res == maxInt / 10 && bit > maxInt % 10))
+                return 0;
+            if(res < minInt / 10 || (res == minInt / 10 && bit < minInt % 10))
+                return 0;
+            x /= 10;
+            res *= 10;
+            res += bit;
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N) N为x的位数 空间复杂度为O(1)
+//leetcode耗时28ms beats21.86%的提交记录
