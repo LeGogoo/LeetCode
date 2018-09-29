@@ -36,3 +36,39 @@ public:
 };
 //时间复杂度为O(N^2) 空间复杂度为O(N^2)
 //leetcode耗时80ms，beats11.17%的提交记录
+
+//上面的状态转移方程式有一个地方写复杂了，改为：
+//if(s[i]==s[j])) F(i,j)=F(i+1,j-1)+2;
+//else F(i,j)=max(F(i,j-1),F(i+1,j))
+class Solution {
+public:
+    int longestPalindromeSubseq(string s) {
+        int sSize = (int)s.size();
+        if(sSize == 0)
+            return 0;
+        vector<vector<int>> memo(sSize, vector<int>(sSize, 0));
+        for(int i = 0; i < sSize; i++)
+            memo[i][i] = 1;//只包含1个数也算回文串
+        for(int add = 1; add < sSize; add++)
+            for(int start = 0; start + add < sSize; start++){
+                int end = start + add;
+                if(s[start] == s[end]){
+                    if(add == 1)
+                        memo[start][end] = 2;
+                    else
+                        memo[start][end] = memo[start + 1][end - 1] + 2;
+                }
+                else {//s[start]!=s[end]
+                    if(add == 1)
+                        memo[start][end] = 1;
+                    else
+                        memo[start][end] = max(memo[start + 1][end], memo[start][end - 1]);
+                    
+                }
+            }
+        return memo[0][sSize - 1];
+    }
+};
+//leetcode用时60ms beats31.65%的提交记录
+//就像 以O(N)的时间复杂度实现寻找字符串中的最长回文子串的Manacher算法一样，这道题可能也有数学上的巧妙优化方法，现在自己还没找到
+//找到了会来补上
