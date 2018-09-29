@@ -1,0 +1,38 @@
+//DP
+//F(i,j)定义为从下标i-j最大的回文子序列长度
+//if(s[i]==s[j])) F(i,j)=F(i+1,j-1)+2;
+//else F(i,j)=max(F(i,j-1),F(i+1,j),F(i+1,j-1))
+//要注意一下j-i==1的情况
+class Solution {
+public:
+    int longestPalindromeSubseq(string s) {
+        int sSize = (int)s.size();
+        if(sSize == 0)
+            return 0;
+        vector<vector<int>> memo(sSize, vector<int>(sSize, 0));
+        for(int i = 0; i < sSize; i++)
+            memo[i][i] = 1;//只包含1个数也算回文串
+        for(int add = 1; add < sSize; add++)
+            for(int start = 0; start + add < sSize; start++){
+                int end = start + add;
+                if(s[start] == s[end]){
+                    if(add == 1)
+                        memo[start][end] = 2;
+                    else
+                        memo[start][end] = memo[start + 1][end - 1] + 2;
+                }
+                else {//s[start]!=s[end]
+                    if(add == 1)
+                        memo[start][end] = 1;
+                    else{
+                        int maxLength = max(memo[start + 1][end], memo[start][end - 1]);
+                        maxLength = max(maxLength, memo[start + 1][end - 1]);
+                        memo[start][end] = maxLength;
+                    }
+                }
+            }
+        return memo[0][sSize - 1];
+    }
+};
+//时间复杂度为O(N^2) 空间复杂度为O(N^2)
+//leetcode耗时80ms，beats11.17%的提交记录
