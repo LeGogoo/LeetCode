@@ -1,0 +1,10 @@
+//emm 今天腾讯面试实现已完成了，开心开心开心，做个水题，混个格子～
+class Solution {
+public:
+    string reverseString(string s) {
+        int sSize = (int)s.size();
+        for(int i = 0; i < sSize / 2; i++)
+            swap(s[i], s[sSize - 1 - i]);
+        return s;
+    }
+};
