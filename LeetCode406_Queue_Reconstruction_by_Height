@@ -1,0 +1,20 @@
+//讨论一下此题的添加顺序：
+//应该first从大到小的添加，因为这样可以保证后面加入的对前面加入的没有影响
+//对于相同first值，因为按照second从小到大添加
+//很巧妙的是，这样添加，可以保证当前数组中的所有元素都是大于或者等于当前值
+//故直接把数插入second对应的位置即可
+//为了快速找值，先对原始排序，再遍历一遍排序后的数组，直接插入second的对应位置即可
+class Solution {
+public:
+    vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) {
+        vector<pair<int, int>> res;
+        sort(people.begin(), people.end(), [](const pair<int, int>a, const pair<int, int>b){
+            return a.first > b.first || (a.first == b.first && a.second < b.second);
+        });
+        for(size_t i = 0; i < people.size(); i++)
+            res.insert(res.begin() + people[i].second, people[i]);
+        return res;
+    }
+};
+//时间复杂度体现在排序上为 O(NlongN) 空间复杂度为O(N)
+//leetcode耗时28ms，beats98.81%的提交记录
