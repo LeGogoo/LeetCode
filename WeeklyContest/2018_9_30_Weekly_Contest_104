@@ -69,3 +69,75 @@ public:
         return -1;
     }
 };
+
+//第三题
+//暴力枚举：
+class Solution {
+public:
+    vector<string> wordSubsets(vector<string>& A, vector<string>& B) {
+        int ASize = (int)A.size();
+        int BSize = (int)B.size();
+        vector<unordered_map<char, int>>memoA(ASize,unordered_map<char, int>());
+        vector<unordered_map<char, int>>memoB(BSize,unordered_map<char, int>());
+        vector<string> res;
+        for(int i = 0; i < ASize; i++)
+            for(int j = 0; j < (int)A[i].size(); j++)
+                memoA[i][A[i][j]]++;
+        
+        for(int i = 0; i < BSize; i++)
+            for(int j = 0; j < (int)B[i].size(); j++)
+                memoB[i][B[i][j]]++;
+        
+        for(int i = 0; i < ASize; i++){
+            int j;
+            for(j = 0; j < BSize; j++){
+                unordered_map<char, int>::iterator it;
+                for(it = memoB[j].begin(); it != memoB[j].end(); it++){
+                    if(it->second > memoA[i][it->first])
+                        break;
+                }
+                if(it != memoB[j].end())
+                    break;
+            }
+            if(j == BSize)
+                res.push_back(A[i]);
+        }
+        return res;
+    }
+};
+//超时了，可以把B合并，比如：{"aabc","ccd","a"}可以合并为{"aabccd"}
+class Solution {
+public:
+    vector<string> wordSubsets(vector<string>& A, vector<string>& B) {
+        int ASize = (int)A.size();
+        int BSize = (int)B.size();
+        vector<unordered_map<char, int>>memoA(ASize,unordered_map<char, int>());
+        vector<unordered_map<char, int>>memoB(BSize,unordered_map<char, int>());
+        unordered_map<char, int>memoBLess;
+        vector<string> res;
+        for(int i = 0; i < ASize; i++)
+            for(int j = 0; j < (int)A[i].size(); j++)
+                memoA[i][A[i][j]]++;
+        
+        for(int i = 0; i < BSize; i++)
+            for(int j = 0; j < (int)B[i].size(); j++)
+                memoB[i][B[i][j]]++;
+        
+        for(int i = 0; i < BSize; i++){
+            for(auto it = memoB[i].begin(); it != memoB[i].end(); it++)
+                memoBLess[it->first] = max(memoBLess[it->first], it->second);
+        }
+        
+        for(int i = 0; i < ASize; i++){
+            unordered_map<char, int>::iterator it;
+            for(it = memoBLess.begin(); it != memoBLess.end(); it++){
+                if(it->second > memoA[i][it->first])
+                    break;
+            }
+            if(it == memoBLess.end())
+                res.push_back(A[i]);
+        }
+        return res;
+    }
+};
+//改进后ac了
