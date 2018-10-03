@@ -1,0 +1,52 @@
+//参加面试耽误了周赛，看了下题型感觉挺可惜的，比较对胃口的题，应该能进前300的
+//第一题：leetcode914 
+//水题，但是在判断对与所有数是否存在非1的最大公约数的时候用的暴力的方式，不知道有没有更好的办法
+class Solution {
+public:
+    bool hasGroupsSizeX(vector<int>& deck) {
+        unordered_map<int, int> memo;//分别是值和频率
+        int minTimes = numeric_limits<int>::max();
+        for(size_t i = 0; i < deck.size(); i++)
+            memo[deck[i]]++;
+        for(auto it = memo.begin(); it != memo.end(); it++)
+            minTimes = min(minTimes, it->second);
+        bool sign = false;
+        for(int i = 2; i <= minTimes; i++){
+            unordered_map<int, int>::iterator it;
+            for(it = memo.begin(); it != memo.end(); it++){
+                if(it->second % i != 0)
+                    break;
+            }
+            if(it == memo.end()){
+                sign = true;
+                break;
+            }
+        }
+        return sign;
+    }
+};
+//看了下uwi这位大佬的代码，求a1，a2,a3,.....,ax的最大公约数
+//先求a1,a2的最大公约数，结果与a3求最大公约数，结果与a4求....
+//看最后结果是否为1，求2个数的最大公约数，用斩除法就好
+class Solution {
+private:
+    int ea(int a, int b){
+        while(b != 0){
+            int c = a;
+            a = b;
+            b = c % b;
+        }
+        return a;
+    }
+public:
+    bool hasGroupsSizeX(vector<int>& deck) {
+        unordered_map<int, int> memo;//分别是值和频率
+        for(size_t i = 0; i < deck.size(); i++)
+            memo[deck[i]]++;
+        int maxSon = 0;
+        for(auto it = memo.begin(); it != memo.end(); it++){
+            maxSon = ea(it->second, maxSon);
+        }
+        return maxSon != 1;;
+    }
+};
