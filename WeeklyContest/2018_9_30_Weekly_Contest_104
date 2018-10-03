@@ -50,3 +50,22 @@ public:
         return maxSon != 1;;
     }
 };
+//第二题 leetcode916
+//水题。。
+class Solution {
+public:
+    int partitionDisjoint(vector<int>& A) {
+        int ASize = (int)A.size();
+        vector<int>memo (ASize,-1);//memo[i]为从A[i]到最后一个元素中的最最小值
+        memo[ASize - 1] = A[ASize - 1];
+        for(int i = ASize - 2; i >= 0; i--)
+            memo[i] = min(memo[i + 1], A[i]);
+        int maxVal = A[0];
+        for(int i = 0; i < ASize - 1; i++){
+            maxVal = max(maxVal, A[i]);
+            if(maxVal <= memo[i + 1])
+                return i + 1;
+        }
+        return -1;
+    }
+};
