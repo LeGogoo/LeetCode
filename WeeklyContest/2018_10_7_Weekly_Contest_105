@@ -1,0 +1,92 @@
+//这次周赛还是比较简单，第二题要稍微绕一下
+//leetcode917，水题
+class Solution {
+public:
+    string reverseOnlyLetters(string S) {
+        int SSize = (int)S.size();
+        int left = 0;
+        int right = SSize - 1;
+        while(left < right){
+            if(!((S[left] >= 'a' && S[left] <= 'z') || (S[left] >= 'A' && S[left] <= 'Z')))
+                left++;
+            else if(!((S[right] >= 'a' && S[right] <= 'z') || (S[right] >= 'A' && S[right] <= 'Z')))
+                right--;
+            else{
+                swap(S[left], S[right]);
+                left++;
+                right--;
+            }
+        }
+        return S;
+    }
+};
+//时间复杂度为O(N)
+
+//leetcode918
+//分2种情况：串没越过结尾，串越过结尾
+//前者可直接用求最大子串方式
+//后者可以用总和减去最小子串
+//注意当最小子串等于总和时要用没越过结尾的值
+//不然：-1，-2，-3这种情况会解释为都不取
+class Solution {
+public:
+    int maxSubarraySumCircular(vector<int>& A) {
+        int ASize = (int)A.size();
+        int lastMax, lastMin, max1, min1, sum;
+        lastMax = lastMin = max1 = min1 = sum = A[0];
+        for(int i = 1; i < ASize; i++){
+            lastMax = max(A[i], A[i] + lastMax);
+            lastMin = min(A[i], A[i] + lastMin);
+            min1 = min(min1,lastMin);
+            max1 = max(max1, lastMax);
+            sum += A[i];
+        }
+        if(sum - min1 == 0)
+            return max1;
+        return max(max1, sum - min1);
+    }
+};
+//时间复杂度为O(N)
+
+//leetcode919
+//水题
+class CBTInserter {
+private:
+    TreeNode* root;
+    queue<TreeNode*> father;
+public:
+    CBTInserter(TreeNode* root) {
+        this->root = root;
+        father.push(root);
+        while(true){
+            TreeNode* frontNode = father.front();
+            if(frontNode->left == NULL)
+                break;
+            father.push(frontNode->left);
+            if(frontNode->right == NULL)
+                break;
+            father.push(frontNode->right);
+            father.pop();
+        }
+    }
+    
+    int insert(int v) {
+        TreeNode* newNode = new TreeNode(v);
+        TreeNode* frontNode = father.front();
+        int res = frontNode->val;
+        if(frontNode->left == NULL){
+            frontNode->left = newNode;
+            father.push(newNode);
+        }
+        else{
+            frontNode->right = newNode;
+            father.push(newNode);
+            father.pop();
+        }
+        return res;
+    }
+    
+    TreeNode* get_root() {
+        return root;
+    }
+};
