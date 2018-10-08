@@ -1,19 +1,98 @@
-//链表排序 链表的特点是无法像数组那样通过下标来找值
-//如果能开一个链表长度空间的索引表，那么数组能做的链表也都能做
-//此题规定只能使用常数空间的复杂度
-//故排序的过程中不能使用下标的方式找值（这样会使时间复杂度多O(N)）
-//能用的排序手段：冒泡，插入（N^2级） 并归排序的自底向上实现
-//但是问题是并归还是会产生O(N)的空间复杂度，用于存并归后的结果
-//但是链表恰巧又能把这空间消耗优化掉：
-//如： 2->4->6->8->1->3->5->7->NULL 并归：2->4->6->8| |->1->3->5->7->NULL
-//并归开始时 left指向2 right指向1 首先找到起始位置 比较*right 和*left 应该为1 把resHead指向1 cur指向1 right=right->next
-//比较*right 和*left 2<3 cur->next=left cur=cur->next left=left->next
-//比较*right 和*left 3<4 cur->next=right cur=cur->next right=right->next
-//.......
-//当一个链表结束后 需要注意，如果是左边的提前到头了，那么把cur->next=right就ok了
-//但是如果是右边的提前到头了，由于原来最后一个是右边的最后一个，换句话说，右边的最后一个连着下一个开始，那么此时应该cur->next=left的同时
-//把左边的最后一个的next连在右边的最后一个的next上
-//返回resHead，注意调用函数后，要将原来left前面的个节点的next连在返回的resHead上
-//resHead可能是头节点，所以增加一个虚拟头节点，注意最后要delete掉虚拟头节点
-
-//注意实现merge的时候可能有 1 2 3 4 | 3 左右不对等长度的情况
+//上次这道题出了点问题，这次补上了，感觉还是太复杂了写的，有时间再去优化一下
+class Solution {
+private:
+    ListNode* mearge(ListNode* leftStart, ListNode* leftEnd, ListNode* rightStart, ListNode* rightEnd){
+        ListNode* lastNext = rightEnd -> next;
+        ListNode* leftCur = leftStart;
+        ListNode* rightCur = rightStart;
+        ListNode* nowCur;
+        ListNode* res;
+        if(leftCur->val < rightCur->val){
+            res = leftCur;
+            nowCur = leftCur;
+            leftCur = leftCur -> next;
+        }
+        else{
+            res = rightCur;
+            nowCur = rightCur;
+            rightCur = rightCur->next;
+        }
+        while(true){
+            if(leftCur == leftEnd->next){
+                nowCur->next = rightCur;
+                break;
+            }
+            if(rightCur == rightEnd->next){
+                nowCur->next = leftCur;
+                leftEnd->next = lastNext;
+                break;
+            }
+            if(leftCur->val < rightCur->val){
+                nowCur->next = leftCur;
+                nowCur = nowCur -> next;
+                leftCur = leftCur->next;
+            }
+            else{
+                nowCur->next = rightCur;
+                nowCur = nowCur -> next;
+                rightCur = rightCur->next;
+            }
+        }
+        return res;
+    }
+    int getSize(ListNode* head){
+        int res = 0;
+        while(head != NULL){
+            res++;
+            head = head->next;
+        }
+        return res;
+    }
+public:
+    ListNode* sortList(ListNode* head) {
+        int add = 1;
+        int headSize = getSize(head);
+        ListNode *leftStart, *leftEnd, *rightStart, *rightEnd;
+        ListNode *lastEnd;
+        while(add <= headSize){
+            bool sign = true;
+            leftStart = leftEnd = rightStart = rightEnd = head;
+            while(leftStart != NULL && leftEnd != NULL && rightStart != NULL && rightEnd != NULL){
+                leftEnd = leftStart;
+                for(int i = 1; i < add; i++){
+                    leftEnd = leftEnd -> next;
+                    if(leftEnd == NULL)
+                        break;
+                }
+                if(leftEnd == NULL)
+                    break;
+                rightStart = leftEnd -> next;
+                if(rightStart == NULL)
+                    break;
+                rightEnd = rightStart;
+                for(int i = 1; i < add; i++){
+                    if(rightEnd -> next == NULL)
+                        break;
+                    rightEnd = rightEnd -> next;
+                }
+                ListNode* nextLeftStart = rightEnd->next;
+                if(sign)
+                    head = mearge(leftStart, leftEnd, rightStart, rightEnd);
+                else{
+                    lastEnd->next =  mearge(leftStart, leftEnd, rightStart, rightEnd);
+                }
+                sign = false;
+                leftStart = nextLeftStart;
+                if(leftEnd->next == leftStart)
+                    lastEnd = leftEnd;
+                else
+                    lastEnd = rightEnd;
+            }
+            add *= 2;
+        }
+        return head;
+    }
+};
+//时间复杂度为O(NlogN) 空间复杂度为O(1)
+//leetcode耗时40ms beats97.35%的提交记录
+//bzw有人直接用sort()，太无耻了吧
