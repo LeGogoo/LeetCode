@@ -1,0 +1,54 @@
+//将2个链表转为2个string，再处理string的加法，string里可直接存ascii码值，而不用转化为对应的char
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        string l1String,l2String;
+        ListNode* cur = l1;
+        while(cur != NULL){
+            l1String.push_back(cur->val);//由于string只是一个辅助，故不将ascii码值转为对应的数字
+            cur = cur->next;
+        }
+        cur = l2;
+        while(cur != NULL){
+            l2String.push_back(cur->val);
+            cur = cur->next;
+        }
+        int s1Now = (int)l1String.size() - 1;
+        int s2Now = (int)l2String.size() - 1;
+        string resStrng;
+        int add = 0;
+        while(s1Now >= 0 || s2Now >=0){
+            if(s1Now == -1){
+                resStrng.insert(resStrng.begin(), (add + l2String[s2Now]) % 10);
+                add = (add + l2String[s2Now]) / 10;
+                s2Now--;
+            }
+            else if(s2Now == -1){
+                resStrng.insert(resStrng.begin(), (add + l1String[s1Now]) % 10);
+                add = (add + l1String[s1Now]) / 10;
+                s1Now--;
+            }
+            else{
+                resStrng.insert(resStrng.begin(), (add + l1String[s1Now] + l2String[s2Now]) % 10);
+                add = (add + l1String[s1Now] + l2String[s2Now]) / 10;
+                s1Now--;
+                s2Now--;
+            }
+        }
+        if(add != 0){
+            resStrng.insert(resStrng.begin(), add);
+        }
+        ListNode* res = NULL;
+        if(resStrng.size() == 0)
+            return res;
+        res = new ListNode(resStrng[0]);
+        cur = res;
+        for(size_t i = 1; i < resStrng.size(); i++){
+            cur->next = new ListNode(resStrng[i]);
+            cur = cur->next;
+        }
+        return res;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(N)
+//LeetCode上耗时44ms beats72.11%的提交记录
