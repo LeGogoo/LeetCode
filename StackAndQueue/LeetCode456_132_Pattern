@@ -1,0 +1,23 @@
+//非常巧妙的解法，从后向前维护一个132中的最后一个值，也就是“2”，和一个栈
+//栈里面存所有比所有当前值大的可能作为“2”的值
+//当发现当前值小于“2”时，返回true
+//否则尽可能的尝试用栈中的元素去替代“2”，替代成功删掉这个元素
+//因为大于一定会使替代发生，故栈中从栈顶向下一定时递增的
+class Solution {
+public:
+    bool find132pattern(vector<int>& nums) {
+        int third = numeric_limits<int>::min();
+        stack<int> need;
+        for (int i = (int)nums.size() - 1; i >= 0; --i) {
+            if (nums[i] < third) return true;
+            else while (!need.empty() && nums[i] > need.top()) {
+                third = need.top();
+                need.pop();
+            }
+            need.push(nums[i]);
+        }
+        return false;
+    }
+};
+//时间复杂度为O(N) 空间复杂度为O(N)
+//leetcode上耗时28ms，beats56.35%的提交记录
